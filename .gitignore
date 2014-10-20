@@ -1,0 +1,4 @@
+*.dat
+/chains/
+debug/*.o
+logs/*.log

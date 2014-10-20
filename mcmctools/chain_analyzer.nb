@@ -1,0 +1,1233 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     45721,       1224]
+NotebookOptionsPosition[     43779,       1166]
+NotebookOutlinePosition[     44247,       1184]
+CellTagsIndexPosition[     44204,       1181]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Initialization Code", "Section"],
+
+Cell["\<\
+This is the bandwidth used in all SmoothKernelDistribution functions. If \
+desired, you can change it to any allowable bandwidth description. Silverman \
+is the default, while StandardGaussian is a more smooth option.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Bandwidth", "=", "\"\<StandardGaussian\>\""}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Loads", " ", "in", " ", "data", " ", "from", " ", "all", " ", "chains", 
+    " ", "in", " ", "the", " ", "directory"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"ImportData", ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "files", ",", "result", ",", "temp", ",", "list", ",", "i", ",", "j", 
+       ",", "priorlines", ",", "datalines"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"files", "=", 
+       RowBox[{"FileNames", "[", "\"\<*.dat\>\"", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Length", "[", "files", "]"}], "\[Equal]", "0"}], ",", 
+        RowBox[{
+         RowBox[{"Print", "[", "\"\<No data files found.\>\"", "]"}], ";", 
+         " ", 
+         RowBox[{"Return", "[", "]"}], ";"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"result", "=", 
+       RowBox[{"ChoiceDialog", "[", 
+        RowBox[{
+         RowBox[{"\"\<Found \>\"", " ", "<>", 
+          RowBox[{"IntegerString", "[", 
+           RowBox[{"Length", "[", "files", "]"}], "]"}], " ", "<>", 
+          "\"\< data files. First file name: \\\"\>\"", " ", "<>", 
+          RowBox[{"files", "[", 
+           RowBox[{"[", "1", "]"}], "]"}], " ", "<>", 
+          "\"\<\\\". Press OK to import, or Cancel to abort.\>\""}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"\"\<OK\>\"", "\[Rule]", "1"}], ",", 
+           RowBox[{"\"\<Cancel\>\"", "\[Rule]", "0"}]}], "}"}]}], "]"}]}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"result", "\[Equal]", "0"}], ",", 
+        RowBox[{
+         RowBox[{"Print", "[", "\"\<Import aborted.\>\"", "]"}], ";", " ", 
+         RowBox[{"Return", "[", "]"}], ";"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"list", "=", 
+       RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"i", "=", "1"}], ",", 
+        RowBox[{"i", "\[LessEqual]", 
+         RowBox[{"Length", "[", "files", "]"}]}], ",", 
+        RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"temp", "=", 
+          RowBox[{"temp", "=", 
+           RowBox[{"Import", "[", 
+            RowBox[{
+             RowBox[{"files", "[", 
+              RowBox[{"[", "1", "]"}], "]"}], ",", "\"\<TSV\>\""}], "]"}]}]}],
+          ";", "\[IndentingNewLine]", 
+         RowBox[{"AppendTo", "[", 
+          RowBox[{"list", ",", "temp"}], "]"}], ";"}]}], 
+       "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"priorlines", "=", 
+       RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"datalines", "=", 
+       RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"i", "=", "1"}], ",", 
+        RowBox[{"i", "\[LessEqual]", 
+         RowBox[{"Length", "[", "files", "]"}]}], ",", 
+        RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"For", "[", 
+          RowBox[{
+           RowBox[{"j", "=", "1"}], ",", 
+           RowBox[{"j", "\[LessEqual]", 
+            RowBox[{"Length", "[", 
+             RowBox[{"list", "[", 
+              RowBox[{"[", "1", "]"}], "]"}], "]"}]}], ",", 
+           RowBox[{"j", "++"}], ",", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"list", "[", 
+                RowBox[{"[", 
+                 RowBox[{"i", ",", "j", ",", "1"}], "]"}], "]"}], "\[Equal]", 
+               "\"\<# Priors:\>\""}], ",", 
+              RowBox[{
+               RowBox[{"AppendTo", "[", 
+                RowBox[{"priorlines", ",", "j"}], "]"}], ";"}]}], "]"}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"NumericQ", "[", 
+               RowBox[{"list", "[", 
+                RowBox[{"[", 
+                 RowBox[{"i", ",", "j", ",", "1"}], "]"}], "]"}], "]"}], ",", 
+              
+              RowBox[{
+               RowBox[{"AppendTo", "[", 
+                RowBox[{"datalines", ",", "j"}], "]"}], ";", 
+               RowBox[{"Break", "[", "]"}], ";"}]}], "]"}], ";"}]}], 
+          "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", "]"}],
+       ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"Params", "=", 
+       RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Acceptances", "=", 
+       RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Samples", "=", 
+       RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Data", "=", 
+       RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"i", "=", "1"}], ",", 
+        RowBox[{"i", "\[LessEqual]", 
+         RowBox[{"Length", "[", "files", "]"}]}], ",", 
+        RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"AppendTo", "[", 
+          RowBox[{"Params", ",", 
+           RowBox[{"list", "[", 
+            RowBox[{"[", 
+             RowBox[{"i", ",", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"priorlines", "[", 
+                 RowBox[{"[", "i", "]"}], "]"}], "+", "1"}], ";;", 
+               RowBox[{
+                RowBox[{"datalines", "[", 
+                 RowBox[{"[", "i", "]"}], "]"}], "-", "2"}]}], ",", "3"}], 
+             "]"}], "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+         RowBox[{"AppendTo", "[", 
+          RowBox[{"Samples", ",", 
+           RowBox[{"list", "[", 
+            RowBox[{"[", 
+             RowBox[{"i", ",", 
+              RowBox[{"-", "2"}], ",", "2"}], "]"}], "]"}]}], "]"}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"AppendTo", "[", 
+          RowBox[{"Acceptances", ",", 
+           RowBox[{"list", "[", 
+            RowBox[{"[", 
+             RowBox[{"i", ",", 
+              RowBox[{"-", "1"}], ",", "2"}], "]"}], "]"}]}], "]"}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"AppendTo", "[", 
+          RowBox[{"Data", ",", 
+           RowBox[{"Transpose", "[", 
+            RowBox[{"list", "[", 
+             RowBox[{"[", 
+              RowBox[{"i", ",", 
+               RowBox[{
+                RowBox[{"datalines", "[", 
+                 RowBox[{"[", "i", "]"}], "]"}], ";;", 
+                RowBox[{"-", "3"}]}]}], "]"}], "]"}], "]"}]}], "]"}], ";"}]}],
+        "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"NumChains", "=", 
+       RowBox[{"Length", "[", "files", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", 
+       RowBox[{"\"\<Import from \>\"", "<>", 
+        RowBox[{"IntegerString", "[", "NumChains", "]"}], "<>", 
+        "\"\< chain successful. Data stored in \\\"NumChains\\\", \
+\\\"Params\\\", \\\"Samples\\\", \\\"Acceptances\\\" and \\\"Data\\\".\>\""}],
+        "]"}], ";"}]}], "\[IndentingNewLine]", "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Performs", " ", "a", " ", "simple", " ", "analysis", " ", "of", " ", 
+    "the", " ", "chain"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"AnalyzeChain", "[", "Num_", "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "i", ",", "paramnum", ",", "means", ",", "stdevs", ",", "correlations", 
+       ",", "medians", ",", "cleancorrelations", ",", "maxpos"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Print", "[", 
+       RowBox[{"\"\<Samples: \>\"", ",", 
+        RowBox[{"Samples", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", 
+       RowBox[{"\"\<Acceptances: \>\"", ",", 
+        RowBox[{"Acceptances", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", 
+       RowBox[{"\"\<Acceptance Ratio: \>\"", ",", 
+        RowBox[{"N", "[", 
+         RowBox[{
+          RowBox[{"100", "*", 
+           RowBox[{
+            RowBox[{"Acceptances", "[", 
+             RowBox[{"[", "Num", "]"}], "]"}], "/", 
+            RowBox[{"Samples", "[", 
+             RowBox[{"[", "Num", "]"}], "]"}]}]}], ",", "4"}], "]"}], ",", 
+        "\"\<%\>\""}], "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", 
+       RowBox[{"\"\<Parameters: \>\"", ",", 
+        RowBox[{"Params", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"paramnum", "=", 
+       RowBox[{"Length", "[", 
+        RowBox[{"Params", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"means", "=", 
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{"Mean", "[", 
+          RowBox[{"Transpose", "[", 
+           RowBox[{"Data", "[", 
+            RowBox[{"[", "Num", "]"}], "]"}], "]"}], "]"}], ",", 
+         RowBox[{"-", "1"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"medians", "=", 
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{"Median", "[", 
+          RowBox[{"Transpose", "[", 
+           RowBox[{"Data", "[", 
+            RowBox[{"[", "Num", "]"}], "]"}], "]"}], "]"}], ",", 
+         RowBox[{"-", "1"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"stdevs", "=", 
+       RowBox[{"Drop", "[", 
+        RowBox[{
+         RowBox[{"StandardDeviation", "[", 
+          RowBox[{"Transpose", "[", 
+           RowBox[{"Data", "[", 
+            RowBox[{"[", "Num", "]"}], "]"}], "]"}], "]"}], ",", 
+         RowBox[{"-", "1"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"correlations", "=", 
+       RowBox[{"Correlation", "[", 
+        RowBox[{"Transpose", "[", 
+         RowBox[{"Drop", "[", 
+          RowBox[{
+           RowBox[{"Data", "[", 
+            RowBox[{"[", "Num", "]"}], "]"}], ",", 
+           RowBox[{"-", "1"}]}], "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"maxpos", "=", 
+       RowBox[{"Ordering", "[", 
+        RowBox[{
+         RowBox[{"Data", "[", 
+          RowBox[{"[", 
+           RowBox[{"Num", ",", "7"}], "]"}], "]"}], ",", 
+         RowBox[{"-", "1"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", 
+       RowBox[{"Grid", "[", 
+        RowBox[{
+         RowBox[{"Join", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"{", 
+             RowBox[{
+             "\"\<Parameter\>\"", ",", "\"\<Most Likely Sample\>\"", ",", 
+              "\"\<Mean\>\"", ",", "\"\<Median\>\"", ",", 
+              "\"\<\[Sigma]\>\""}], "}"}], "}"}], ",", 
+           RowBox[{"Transpose", "[", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"Params", "[", 
+               RowBox[{"[", "Num", "]"}], "]"}], ",", 
+              RowBox[{"Flatten", "@", 
+               RowBox[{"Data", "[", 
+                RowBox[{"[", 
+                 RowBox[{"Num", ",", 
+                  RowBox[{"1", ";;", "6"}], ",", "maxpos"}], "]"}], "]"}]}], 
+              ",", "means", ",", "medians", ",", "stdevs"}], "}"}], "]"}]}], 
+          "]"}], ",", 
+         RowBox[{"Frame", "\[Rule]", "All"}]}], "]"}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"cleancorrelations", "=", 
+       RowBox[{
+        RowBox[{"UpperTriangularize", "[", "correlations", "]"}], "/.", 
+        RowBox[{
+         RowBox[{"x_", "/;", 
+          RowBox[{"x", "==", "0"}]}], "\[Rule]", "\"\<\>\""}]}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", "\"\<Normalized covariance matrix:\>\"", "]"}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"Print", "[", 
+       RowBox[{
+        RowBox[{"ArrayFlatten", "[", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"\"\<\>\"", ",", 
+             RowBox[{"{", 
+              RowBox[{"Params", "[", 
+               RowBox[{"[", "Num", "]"}], "]"}], "}"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"Transpose", "[", 
+              RowBox[{"{", 
+               RowBox[{"Params", "[", 
+                RowBox[{"[", "Num", "]"}], "]"}], "}"}], "]"}], ",", 
+             "cleancorrelations"}], "}"}]}], "}"}], "]"}], "//", 
+        "MatrixForm"}], "]"}], ";"}]}], "\[IndentingNewLine]", 
+    "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Computes", " ", "the", " ", "marginalized", " ", "1", "D", " ", "PDFs", 
+    " ", "and", " ", "plots", " ", "them", " ", "with", " ", "some", " ", 
+    "information"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Compute1dPDFs", "[", "Num_", "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "skd", ",", "i", ",", "max", ",", "min", ",", "delta", ",", 
+       "numparams"}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"numparams", "=", 
+       RowBox[{"Length", "[", 
+        RowBox[{"Params", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"i", "=", "1"}], ",", 
+        RowBox[{"i", "\[LessEqual]", "numparams"}], ",", 
+        RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"skd", "=", 
+          RowBox[{"SmoothKernelDistribution", "[", 
+           RowBox[{
+            RowBox[{"Data", "[", 
+             RowBox[{"[", 
+              RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", "Bandwidth"}], 
+           "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"max", "=", 
+          RowBox[{"Max", "[", 
+           RowBox[{"Data", "[", 
+            RowBox[{"[", 
+             RowBox[{"Num", ",", "i"}], "]"}], "]"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"min", "=", 
+          RowBox[{"Min", "[", 
+           RowBox[{"Data", "[", 
+            RowBox[{"[", 
+             RowBox[{"Num", ",", "i"}], "]"}], "]"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"delta", "=", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"max", "-", "min"}], ")"}], "/", "20"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Print", "[", 
+          RowBox[{"Plot", "[", 
+           RowBox[{
+            RowBox[{"PDF", "[", 
+             RowBox[{"skd", ",", "x"}], "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"x", ",", 
+              RowBox[{"min", "-", "delta"}], ",", 
+              RowBox[{"max", "+", "delta"}]}], "}"}], ",", 
+            RowBox[{"Filling", "\[Rule]", "Axis"}], ",", 
+            RowBox[{"Exclusions", "\[Rule]", "None"}], ",", 
+            RowBox[{"AxesLabel", "\[Rule]", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"Params", "[", 
+                RowBox[{"[", 
+                 RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", 
+               RowBox[{"\"\<PDF[\>\"", "<>", 
+                RowBox[{"Params", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"Num", ",", "i"}], "]"}], "]"}], "<>", 
+                "\"\<]\>\""}]}], "}"}]}], ",", 
+            RowBox[{"Ticks", "\[Rule]", 
+             RowBox[{"{", 
+              RowBox[{"Automatic", ",", "None"}], "}"}]}]}], "]"}], "]"}], 
+         ";", "\[IndentingNewLine]", 
+         RowBox[{"Print", "[", 
+          RowBox[{"Grid", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{
+              "\"\<\>\"", ",", "\"\<Mode\>\"", ",", "\"\<Mean\>\"", ",", 
+               "\"\<\[Sigma]\>\""}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"Params", "[", 
+                RowBox[{"[", 
+                 RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", 
+               RowBox[{"x", "/.", 
+                RowBox[{
+                 RowBox[{"Maximize", "[", 
+                  RowBox[{
+                   RowBox[{"PDF", "[", 
+                    RowBox[{"skd", ",", "x"}], "]"}], ",", "x"}], "]"}], "[", 
+                 
+                 RowBox[{"[", "2", "]"}], "]"}]}], ",", 
+               RowBox[{"Mean", "[", "skd", "]"}], ",", 
+               RowBox[{"Sqrt", "[", 
+                RowBox[{"Variance", "[", "skd", "]"}], "]"}]}], "}"}]}], 
+            "}"}], "]"}], "]"}], ";"}]}], "\[IndentingNewLine]", "]"}], 
+      ";"}]}], "\[IndentingNewLine]", "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "This", " ", "routine", " ", "displays", " ", "plots", " ", "from", " ", 
+    "the", " ", "below", " ", "functions", " ", "in", " ", "a", " ", "grid"}],
+    " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"ShowPlots", "[", 
+    RowBox[{"Num_", ",", "plots_"}], "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", "numparams", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"numparams", "=", 
+       RowBox[{"Length", "[", 
+        RowBox[{"Params", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Grid", "[", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"j", ">", "i"}], ",", 
+           RowBox[{"plots", "[", 
+            RowBox[{"[", 
+             RowBox[{"i", ",", "j"}], "]"}], "]"}], ",", "\"\<\>\""}], "]"}], 
+         ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", "numparams"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"j", ",", "1", ",", "numparams"}], "}"}]}], "]"}], 
+       "]"}]}]}], "\[IndentingNewLine]", "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "This", " ", "routine", " ", "calculates", " ", "2", "D", " ", 
+    "heatmaps"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Plot2DHeatMaps", "[", "Num_", "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "i", ",", "j", ",", "skd", ",", "minx", ",", "maxx", ",", "miny", ",", 
+       "maxy", ",", "plots", ",", "numparams"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"numparams", "=", 
+       RowBox[{"Length", "[", 
+        RowBox[{"Params", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"plots", "=", 
+       RowBox[{"ConstantArray", "[", 
+        RowBox[{"0", ",", 
+         RowBox[{"{", 
+          RowBox[{"numparams", ",", "numparams"}], "}"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"i", "=", "1"}], ",", 
+        RowBox[{"i", "<", "numparams"}], ",", 
+        RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"For", "[", 
+          RowBox[{
+           RowBox[{"j", "=", 
+            RowBox[{"i", "+", "1"}]}], ",", 
+           RowBox[{"j", "<=", "numparams"}], ",", 
+           RowBox[{"j", "++"}], ",", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"minx", "=", 
+             RowBox[{"Min", "[", 
+              RowBox[{"Data", "[", 
+               RowBox[{"[", 
+                RowBox[{"Num", ",", "i"}], "]"}], "]"}], "]"}]}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{"miny", "=", 
+             RowBox[{"Min", "[", 
+              RowBox[{"Data", "[", 
+               RowBox[{"[", 
+                RowBox[{"Num", ",", "j"}], "]"}], "]"}], "]"}]}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{"maxx", "=", 
+             RowBox[{"Max", "[", 
+              RowBox[{"Data", "[", 
+               RowBox[{"[", 
+                RowBox[{"Num", ",", "i"}], "]"}], "]"}], "]"}]}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{"maxy", "=", 
+             RowBox[{"Max", "[", 
+              RowBox[{"Data", "[", 
+               RowBox[{"[", 
+                RowBox[{"Num", ",", "j"}], "]"}], "]"}], "]"}]}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{"skd", "=", 
+             RowBox[{"SmoothKernelDistribution", "[", 
+              RowBox[{
+               RowBox[{"Transpose", "[", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"Data", "[", 
+                   RowBox[{"[", 
+                    RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", 
+                  RowBox[{"Data", "[", 
+                   RowBox[{"[", 
+                    RowBox[{"Num", ",", "j"}], "]"}], "]"}]}], "}"}], "]"}], 
+               ",", "Bandwidth"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{"plots", "[", 
+              RowBox[{"[", 
+               RowBox[{"i", ",", "j"}], "]"}], "]"}], "=", 
+             RowBox[{"DensityPlot", "[", 
+              RowBox[{
+               RowBox[{"Evaluate", "@", 
+                RowBox[{"PDF", "[", 
+                 RowBox[{"skd", ",", 
+                  RowBox[{"{", 
+                   RowBox[{"x", ",", "y"}], "}"}]}], "]"}]}], ",", 
+               RowBox[{"{", 
+                RowBox[{"x", ",", "minx", ",", "maxx"}], "}"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"y", ",", "miny", ",", "maxy"}], "}"}], ",", 
+               RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+               RowBox[{"PlotPoints", "\[Rule]", "100"}], ",", 
+               RowBox[{"FrameLabel", "\[Rule]", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"Params", "[", 
+                   RowBox[{"[", 
+                    RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", 
+                  RowBox[{"Params", "[", 
+                   RowBox[{"[", 
+                    RowBox[{"Num", ",", "j"}], "]"}], "]"}]}], "}"}]}]}], 
+              "]"}]}], ";"}]}], "\[IndentingNewLine]", "]"}], ";"}]}], 
+       "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", "plots"}]}], 
+    "\[IndentingNewLine]", "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Used", " ", "to", " ", "make", " ", "points", " ", "smaller", " ", "in", 
+    " ", "the", " ", "scatter", " ", "plots", " ", 
+    RowBox[{"(", 
+     RowBox[{"note", ",", " ", 
+      RowBox[{
+      "you", " ", "can", " ", "also", " ", "do", " ", "a", " ", "replacement",
+        " ", "on", " ", "\"\<Small\>\"", " ", "to", " ", "something", " ", 
+       "smaller", " ", "a", " ", "posteriori", " ", "if", " ", "desired"}]}], 
+     " "}]}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"smallpoint", "[", "x_", "]"}], ":=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"PointSize", "[", "Small", "]"}], ",", 
+     RowBox[{"Point", "[", "x", "]"}]}], "}"}], " "}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "This", " ", "routine", " ", "creates", " ", "scatter", " ", "plots", " ",
+      "of", " ", "the", " ", "data"}], ",", " ", 
+    RowBox[{
+    "using", " ", "the", " ", "2", "D", " ", "PDF", " ", "to", " ", "colour", 
+     " ", "the", " ", "points"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"ScatterPlots", "[", "Num_", "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "numparams", ",", "i", ",", "j", ",", "plots", ",", "PDFvals", ",", 
+       "max", ",", "data", ",", "iter", ",", "skd", ",", "colorFun"}], "}"}], 
+     ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"numparams", "=", 
+       RowBox[{"Length", "[", 
+        RowBox[{"Params", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"plots", "=", 
+       RowBox[{"ConstantArray", "[", 
+        RowBox[{"0", ",", 
+         RowBox[{"{", 
+          RowBox[{"numparams", ",", "numparams"}], "}"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"i", "=", "1"}], ",", 
+        RowBox[{"i", "<", "numparams"}], ",", 
+        RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"For", "[", 
+          RowBox[{
+           RowBox[{"j", "=", 
+            RowBox[{"i", "+", "1"}]}], ",", 
+           RowBox[{"j", "\[LessEqual]", "numparams"}], ",", 
+           RowBox[{"j", "++"}], ",", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"data", "=", 
+             RowBox[{"Transpose", "[", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"Data", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", 
+                RowBox[{"Data", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"Num", ",", "j"}], "]"}], "]"}]}], "}"}], "]"}]}], 
+            ";", "\[IndentingNewLine]", 
+            RowBox[{"skd", "=", 
+             RowBox[{"SmoothKernelDistribution", "[", 
+              RowBox[{"data", ",", "Bandwidth"}], "]"}]}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{"max", "=", 
+             RowBox[{"Max", "[", 
+              RowBox[{"Table", "[", 
+               RowBox[{
+                RowBox[{"PDF", "[", 
+                 RowBox[{"skd", ",", 
+                  RowBox[{"data", "[", 
+                   RowBox[{"[", "iter", "]"}], "]"}]}], "]"}], ",", 
+                RowBox[{"{", 
+                 RowBox[{"iter", ",", "1", ",", 
+                  RowBox[{"Length", "[", "data", "]"}]}], "}"}]}], "]"}], 
+              "]"}]}], ";", "\[IndentingNewLine]", 
+            RowBox[{"colorFun", "=", 
+             RowBox[{"Function", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"x", ",", "y"}], "}"}], ",", 
+               RowBox[{"Hue", "[", 
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{"1", "-", 
+                   RowBox[{
+                    RowBox[{"Evaluate", "@", 
+                    RowBox[{"PDF", "[", 
+                    RowBox[{"skd", ",", 
+                    RowBox[{"{", 
+                    RowBox[{"x", ",", "y"}], "}"}]}], "]"}]}], "/", "max"}]}],
+                   ")"}], "*", "0.75"}], "]"}]}], "]"}]}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{"plots", "[", 
+              RowBox[{"[", 
+               RowBox[{"i", ",", "j"}], "]"}], "]"}], "=", 
+             RowBox[{
+              RowBox[{"ListLinePlot", "[", 
+               RowBox[{"data", ",", 
+                RowBox[{"ColorFunction", "\[Rule]", "colorFun"}], ",", 
+                RowBox[{"ColorFunctionScaling", "\[Rule]", "False"}], ",", 
+                RowBox[{"FrameLabel", "\[Rule]", 
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"Params", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", 
+                   RowBox[{"Params", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"Num", ",", "j"}], "]"}], "]"}]}], "}"}]}]}], 
+               "]"}], "/.", 
+              RowBox[{
+               RowBox[{"Line", "[", "arg___", "]"}], "\[RuleDelayed]", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"PointSize", "[", "Small", "]"}], ",", 
+                 RowBox[{"Point", "[", "arg", "]"}]}], "}"}]}]}]}], ";"}]}], 
+          "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", "]"}],
+       ";", "\[IndentingNewLine]", "plots"}]}], "\[IndentingNewLine]", 
+    "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"Given", " ", "a", " ", "distribution"}], ",", " ", 
+    RowBox[{"a", " ", "number", " ", "of", " ", "integration", " ", "steps"}],
+     ",", " ", 
+    RowBox[{
+    "and", " ", "a", " ", "range", " ", "over", " ", "which", " ", "to", " ", 
+     "integrate"}], ",", " ", 
+    RowBox[{
+    "this", " ", "routine", " ", "finds", " ", "the", " ", "level", " ", "of",
+      " ", "the", " ", "PDF", " ", "above", " ", "which", " ", "corresponds", 
+     " ", "to", " ", "the", " ", "1", "\[Sigma]"}], ",", " ", 
+    RowBox[{
+    "2", "\[Sigma]", " ", "and", " ", "3", "\[Sigma]", " ", "contours"}]}], 
+   " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"FindThresholds", "[", 
+    RowBox[{
+    "skd_", ",", "numsteps_", ",", "minx_", ",", "miny_", ",", "maxx_", ",", 
+     "maxy_"}], "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "stepx", ",", "stepy", ",", "problist", ",", "acc", ",", "onesig", ",", 
+       "twosig", ",", "threesig"}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"stepx", "=", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"maxx", "-", "minx"}], ")"}], "/", "numsteps"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"stepy", "=", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"maxy", "-", "miny"}], ")"}], "/", "numsteps"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"problist", "=", 
+       RowBox[{"Reverse", "[", 
+        RowBox[{"Sort", "[", 
+         RowBox[{"Flatten", "[", 
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"stepx", " ", "stepy", " ", 
+             RowBox[{"Evaluate", "@", 
+              RowBox[{"PDF", "[", 
+               RowBox[{"skd", ",", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"minx", "+", 
+                   RowBox[{"x", " ", "stepx"}]}], ",", 
+                  RowBox[{"miny", "+", 
+                   RowBox[{"y", " ", "stepy"}]}]}], "}"}]}], "]"}]}]}], ",", 
+            RowBox[{"{", 
+             RowBox[{"x", ",", "0", ",", 
+              RowBox[{"numsteps", "-", "1"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"y", ",", "0", ",", 
+              RowBox[{"numsteps", "-", "1"}]}], "}"}]}], "]"}], "]"}], "]"}], 
+        "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"acc", "=", 
+       RowBox[{"Accumulate", "[", "problist", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"onesig", "=", 
+       RowBox[{"problist", "[", 
+        RowBox[{"[", 
+         RowBox[{"LengthWhile", "[", 
+          RowBox[{"acc", ",", 
+           RowBox[{
+            RowBox[{"#", "<", "0.63"}], "&"}]}], "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"twosig", "=", 
+       RowBox[{"problist", "[", 
+        RowBox[{"[", 
+         RowBox[{"LengthWhile", "[", 
+          RowBox[{"acc", ",", 
+           RowBox[{
+            RowBox[{"#", "<", "0.95"}], "&"}]}], "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"threesig", "=", 
+       RowBox[{"problist", "[", 
+        RowBox[{"[", 
+         RowBox[{"LengthWhile", "[", 
+          RowBox[{"acc", ",", 
+           RowBox[{
+            RowBox[{"#", "<", "0.99"}], "&"}]}], "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"onesig", ",", "twosig", ",", "threesig"}], "}"}], "/", 
+        "stepx"}], "/", "stepy"}]}]}], "\[IndentingNewLine]", 
+    "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "Given", " ", "a", " ", "chain", " ", "number", " ", "and", " ", "two", 
+     " ", "parameter", " ", "numbers"}], ",", " ", 
+    RowBox[{
+    "this", " ", "produces", " ", "the", " ", "contour", " ", "plot"}]}], " ",
+    "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"PlotContours", "[", 
+    RowBox[{"Num_", ",", "Param1_", ",", "Param2_"}], "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"i", "=", "Param1"}], ",", 
+       RowBox[{"j", "=", "Param2"}], ",", "skd", ",", "minx", ",", "miny", 
+       ",", "maxx", ",", "maxy", ",", "contours", ",", "data", ",", "delta"}],
+       "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"data", "=", 
+       RowBox[{"Transpose", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Data", "[", 
+           RowBox[{"[", 
+            RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", 
+          RowBox[{"Data", "[", 
+           RowBox[{"[", 
+            RowBox[{"Num", ",", "j"}], "]"}], "]"}]}], "}"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"skd", "=", 
+       RowBox[{"SmoothKernelDistribution", "[", 
+        RowBox[{"data", ",", "Bandwidth"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"minx", "=", 
+       RowBox[{"Min", "[", 
+        RowBox[{"Data", "[", 
+         RowBox[{"[", 
+          RowBox[{"Num", ",", "i"}], "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"miny", "=", 
+       RowBox[{"Min", "[", 
+        RowBox[{"Data", "[", 
+         RowBox[{"[", 
+          RowBox[{"Num", ",", "j"}], "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"maxx", "=", 
+       RowBox[{"Max", "[", 
+        RowBox[{"Data", "[", 
+         RowBox[{"[", 
+          RowBox[{"Num", ",", "i"}], "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"maxy", "=", 
+       RowBox[{"Max", "[", 
+        RowBox[{"Data", "[", 
+         RowBox[{"[", 
+          RowBox[{"Num", ",", "j"}], "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"delta", "=", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"maxx", "-", "minx"}], ")"}], "/", "10"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"maxx", "+=", "delta"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"minx", "-=", "delta"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"delta", "=", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"maxy", "-", "miny"}], ")"}], "/", "10"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"maxy", "+=", "delta"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"miny", "-=", "delta"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"contours", "=", 
+       RowBox[{"FindThresholds", "[", 
+        RowBox[{
+        "skd", ",", "100", ",", "minx", ",", "miny", ",", "maxx", ",", 
+         "maxy"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"ContourPlot", "[", 
+       RowBox[{
+        RowBox[{"Evaluate", "@", 
+         RowBox[{"PDF", "[", 
+          RowBox[{"skd", ",", 
+           RowBox[{"{", 
+            RowBox[{"x", ",", "y"}], "}"}]}], "]"}]}], ",", 
+        RowBox[{"{", 
+         RowBox[{"x", ",", "minx", ",", "maxx"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"y", ",", "miny", ",", "maxy"}], "}"}], ",", 
+        RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+        RowBox[{"PlotPoints", "\[Rule]", "100"}], ",", 
+        RowBox[{"Contours", "\[Rule]", "contours"}], ",", 
+        RowBox[{"FrameLabel", "\[Rule]", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"Params", "[", 
+            RowBox[{"[", 
+             RowBox[{"Num", ",", "i"}], "]"}], "]"}], ",", 
+           RowBox[{"Params", "[", 
+            RowBox[{"[", 
+             RowBox[{"Num", ",", "j"}], "]"}], "]"}]}], "}"}]}], ",", 
+        RowBox[{"ContourShading", "\[Rule]", 
+         RowBox[{"{", 
+          RowBox[{"White", ",", 
+           RowBox[{"RGBColor", "[", 
+            RowBox[{"1", ",", "1", ",", "0", ",", "0.3"}], "]"}], ",", 
+           RowBox[{"RGBColor", "[", 
+            RowBox[{"1", ",", 
+             RowBox[{"102", "/", "256"}], ",", "0", ",", "0.3"}], "]"}], ",", 
+           
+           RowBox[{"RGBColor", "[", 
+            RowBox[{"1", ",", "0", ",", "0", ",", "0.3"}], "]"}]}], "}"}]}]}],
+        "]"}]}]}], "\[IndentingNewLine]", "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "This", " ", "goes", " ", "and", " ", "generates", " ", "all", " ", "the", 
+    " ", "contour", " ", "plots"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"ContourPlots", "[", "Num_", "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "numparams", ",", "i", ",", "j", ",", "plots", ",", "PDFvals", ",", 
+       "max", ",", "data", ",", "iter", ",", "skd", ",", "colorFun"}], "}"}], 
+     ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"numparams", "=", 
+       RowBox[{"Length", "[", 
+        RowBox[{"Params", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"plots", "=", 
+       RowBox[{"ConstantArray", "[", 
+        RowBox[{"0", ",", 
+         RowBox[{"{", 
+          RowBox[{"numparams", ",", "numparams"}], "}"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"i", "=", "1"}], ",", 
+        RowBox[{"i", "<", "numparams"}], ",", 
+        RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"For", "[", 
+          RowBox[{
+           RowBox[{"j", "=", 
+            RowBox[{"i", "+", "1"}]}], ",", 
+           RowBox[{"j", "\[LessEqual]", "numparams"}], ",", 
+           RowBox[{"j", "++"}], ",", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"plots", "[", 
+              RowBox[{"[", 
+               RowBox[{"i", ",", "j"}], "]"}], "]"}], "=", 
+             RowBox[{"PlotContours", "[", 
+              RowBox[{"Num", ",", "i", ",", "j"}], "]"}]}], ";"}]}], 
+          "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", "]"}],
+       ";", "\[IndentingNewLine]", "plots"}]}], "\[IndentingNewLine]", 
+    "]"}]}]}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "This", " ", "routine", " ", "displays", " ", "contour", " ", "plots", " ",
+     "and", " ", "scatter", " ", "plots", " ", "together"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"CombineScatterContours", "[", 
+    RowBox[{"Num_", ",", "scatter_", ",", "contours_"}], "]"}], ":=", 
+   RowBox[{"Block", "[", 
+    RowBox[{
+     RowBox[{"{", "numparams", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"numparams", "=", 
+       RowBox[{"Length", "[", 
+        RowBox[{"Params", "[", 
+         RowBox[{"[", "Num", "]"}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Grid", "[", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"j", ">", "i"}], ",", 
+           RowBox[{"Show", "[", 
+            RowBox[{
+             RowBox[{"contours", "[", 
+              RowBox[{"[", 
+               RowBox[{"i", ",", "j"}], "]"}], "]"}], ",", 
+             RowBox[{"scatter", "[", 
+              RowBox[{"[", 
+               RowBox[{"i", ",", "j"}], "]"}], "]"}]}], "]"}], ",", 
+           "\"\<\>\""}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", "numparams"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"j", ",", "1", ",", "numparams"}], "}"}]}], "]"}], 
+       "]"}]}]}], "\[IndentingNewLine]", "]"}]}]}]], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Results Code", "Section"],
+
+Cell["Set the run number here.", "Text"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"runnum", "=", "1"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"NotebookDirectory", "[", "]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"SetDirectory", "[", 
+  RowBox[{"\"\<../chains/run\>\"", "<>", 
+   RowBox[{"IntegerString", "[", "runnum", "]"}]}], "]"}]}], "Input"],
+
+Cell["Please check that this is the correct directory.", "Text"],
+
+Cell[BoxData[
+ RowBox[{"ImportData", ";"}]], "Input"],
+
+Cell["Choose a chain number here.", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Num", "=", "1"}], ";"}]], "Input"],
+
+Cell["Perform the basic analysis.", "Text"],
+
+Cell[BoxData[
+ RowBox[{"AnalyzeChain", "[", "Num", "]"}]], "Input"],
+
+Cell[TextData[{
+ "Ok. Now that we have those preliminaries out of the way, let\
+\[CloseCurlyQuote]s go to the one-dimensional PDFs. We use ",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ "\[CloseCurlyQuote]s SmoothKernelDistribution function to make a \
+distribution kernel over our marginalized 1D data."
+}], "Text"],
+
+Cell[BoxData[
+ RowBox[{"Compute1dPDFs", "[", "Num", "]"}]], "Input"],
+
+Cell["\<\
+We now show heatmaps for two-dimensional marginalized PDFs. These are a \
+little expensive to compute, so we store them before plotting them.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"myplots", "=", 
+   RowBox[{"Plot2DHeatMaps", "[", "Num", "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"ShowPlots", "[", 
+  RowBox[{"Num", ",", "myplots"}], "]"}]], "Input"],
+
+Cell["\<\
+We can also plot our data, colour coded by the 2D marginalized PDF.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"scatters", "=", 
+   RowBox[{"ScatterPlots", "[", "Num", "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"ShowPlots", "[", 
+  RowBox[{"Num", ",", "scatters"}], "]"}]], "Input"],
+
+Cell["\<\
+Finally, we compute one and two sigma contours for our heat maps. To do this, \
+we construct a marginalized 2D PDF. We then take the region of interest and \
+divide it up into squares. We integrate the PDF over each square, storing the \
+result. Next, we take all the boxes, and order them by their integrated \
+probability. We then sum the boxes until we arrive at the desired probability \
+threshold. This then translates back to the probability of the box at that \
+threshold, which in turn translates to the PDF at the threshold. This is then \
+sufficient for us to draw contours. Note that the integrated PDF over the \
+entire 2D parameterspace is 1.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"contours", "=", 
+   RowBox[{"ContourPlots", "[", "Num", "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{"ShowPlots", "[", 
+  RowBox[{"Num", ",", "contours"}], "]"}]], "Input"],
+
+Cell["\<\
+We can also join the scatter and contour plots together.\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"CombineScatterContours", "[", 
+  RowBox[{"Num", ",", "scatters", ",", "contours"}], "]"}]], "Input"],
+
+Cell["\<\
+These may not look like much, but that\[CloseCurlyQuote]s mostly because they\
+\[CloseCurlyQuote]re so small. When they\[CloseCurlyQuote]re bigger, they \
+look pretty awesome:\
+\>", "Text"],
+
+Cell[BoxData[
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"contours", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ",", "2"}], "]"}], "]"}], ",", 
+   RowBox[{"scatters", "[", 
+    RowBox[{"[", 
+     RowBox[{"1", ",", "2"}], "]"}], "]"}]}], "]"}]], "Input"],
+
+Cell["\<\
+To obtain smoother contours, we need to use more bandwidth on the kernel. \
+Either different methods can be used, or bandwidths can be set manually if \
+desired (although they have to be set individually for each parameter, and \
+the code is not geared towards allowing this). Alternatively, we can collect \
+more data points. I suspect that if chains are shown to converge, their data \
+can be combined to make prettier plots.\
+\>", "Text"]
+}, Open  ]]
+},
+WindowSize->{1561, 940},
+WindowMargins->{{126, Automatic}, {Automatic, -7}},
+TrackCellChangeTimes->False,
+Magnification:>FEPrivate`If[
+  FEPrivate`Equal[FEPrivate`$VersionNumber, 6.], 1.25, 1.25 Inherited],
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (October 10, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 38, 0, 90, "Section"],
+Cell[620, 24, 241, 4, 59, "Text"],
+Cell[864, 30, 98, 2, 36, "Input"],
+Cell[965, 34, 7246, 176, 934, "Input"],
+Cell[8214, 212, 5374, 139, 428, "Input"],
+Cell[13591, 353, 4043, 102, 313, "Input"],
+Cell[17637, 457, 1213, 33, 129, "Input"],
+Cell[18853, 492, 4250, 105, 405, "Input"],
+Cell[23106, 599, 743, 18, 83, "Input"],
+Cell[23852, 619, 4714, 115, 382, "Input"],
+Cell[28569, 736, 3564, 94, 313, "Input"],
+Cell[32136, 832, 4411, 114, 451, "Input"],
+Cell[36550, 948, 1859, 48, 267, "Input"],
+Cell[38412, 998, 1429, 38, 129, "Input"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[39878, 1041, 31, 0, 52, "Section"],
+Cell[39912, 1043, 40, 0, 35, "Text"],
+Cell[39955, 1045, 340, 9, 83, "Input"],
+Cell[40298, 1056, 64, 0, 35, "Text"],
+Cell[40365, 1058, 53, 1, 36, "Input"],
+Cell[40421, 1061, 43, 0, 35, "Text"],
+Cell[40467, 1063, 69, 2, 36, "Input"],
+Cell[40539, 1067, 43, 0, 36, "Text"],
+Cell[40585, 1069, 67, 1, 36, "Input"],
+Cell[40655, 1072, 322, 7, 59, "Text"],
+Cell[40980, 1081, 68, 1, 36, "Input"],
+Cell[41051, 1084, 165, 3, 36, "Text"],
+Cell[41219, 1089, 117, 3, 36, "Input"],
+Cell[41339, 1094, 93, 2, 36, "Input"],
+Cell[41435, 1098, 91, 2, 36, "Text"],
+Cell[41529, 1102, 116, 3, 36, "Input"],
+Cell[41648, 1107, 94, 2, 36, "Input"],
+Cell[41745, 1111, 679, 10, 105, "Text"],
+Cell[42427, 1123, 116, 3, 36, "Input"],
+Cell[42546, 1128, 94, 2, 36, "Input"],
+Cell[42643, 1132, 80, 2, 36, "Text"],
+Cell[42726, 1136, 124, 2, 36, "Input"],
+Cell[42853, 1140, 199, 4, 36, "Text"],
+Cell[43055, 1146, 254, 8, 36, "Input"],
+Cell[43312, 1156, 451, 7, 82, "Text"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

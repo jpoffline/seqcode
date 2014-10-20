@@ -1,0 +1,16 @@
+# Parameters to MCMC over are included in this file
+# The format is "section name" "parameter name" "prior min" "prior max" "sigma"
+# with spaces between all quantities.
+# All parameters not appearing in this list are taken from the params.ini file
+# Lines beginning with # are comments; blank lines are permitted
+
+# Lines beginning with "L " indicate a log parameter. The sigma is then read in Log10 units.
+
+# We want to modify the sigmas such that we obtain an acceptance rate of about 0.234
+#Cosmology Omegamh2 0.01 0.2 0.001
+#Cosmology Omegabh2 0.005 0.1 0.0005
+#Cosmology Omegakh2 -0.02 0.02 0.0005
+#Cosmology desiredh 0.5 1.0 0.001
+Cosmology phi0 0.1 5.0 0.005
+Cosmology phidot0 0.1 2.0 0.005
+Quintessence mass 0.1 2.0 0.005

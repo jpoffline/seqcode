@@ -1,0 +1,186 @@
+Intructions for Constructing a New Model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(This will be easier to read with wordwrap turned on!)
+
+Step #1. 
+Choose a name. It should be descriptive, and use a capital first letter. Eg, Kessence, Quintessence, KGB, LambdaCDM. In the following instructions, the name will be referred to as <Name>, an all caps version will be referred to as <NAME>, and an all lower case version as <name>.
+
+
+Step #2. 
+Create two files: <name>.h and <name>.cpp. We'll start by working with <name>.h. At the top of the file, include some comments on what the model is. Next, copy paste the following code:
+
+//////////////////////////////
+#ifndef <NAME>_H_
+#define <NAME>_H_
+
+#include "model.h"
+
+class <Name> : public Model {
+
+	public:
+		// Here are the functions that are overridden by the <Name> class
+		int derivatives(const double data[], double derivs[], Parameters &params);
+		void getstate(const double data[], const double time, double info[], Parameters &params);
+		int init(double data[], const double time, Parameters &params, IniReader &init, Output &output);
+        bool isvalidconfig(const double data[]) {return true;}
+		double speedofsound2(const double data[]);
+		bool implementsSOS() {return true;}
+		bool isghost(const double data[]);
+		bool implementsghost() {return true;}
+		double speedoftensor2(const double data[]);
+		bool implementsSOT() {return true;}
+		bool istensorghost(const double data[]);
+		bool implementstensorghost() {return true;}
+
+	private:
+		// Here are some overridden internal functions. They're pretty self-explanatory.
+		double pressure(const double data[], const double hdot);
+		double energydensity(const double data[]);
+
+};
+
+#endif /* <NAME>_H_ */
+//////////////////////////////
+
+Remember to substitute in for <NAME> and <Name> appropriately.
+
+
+Step #3. 
+Choose what functionality you want your class to have! The above template included all possible routines for the model. If you aren't implementing some of the functionality, then you can remove bits and pieces.
+
+- implementsSOS and speedofsound2 are used for the speed of sound calculations. Remove both if you aren't using them.
+
+- isghost and implementsghost are used to check if perturbations become ghostlike. Remove both if you aren't using them.
+
+- speedoftensor2 and implementsSOT are used for the speed of tensor perturbations calculations. Remove both if you aren't using them.
+
+- istensorghost and implementstensorghost are used to check if tensor perturbations are ghostlike. Remove both if you aren't using them.
+
+- getstate has a default implementation that will probably work for your model. It will only fail if you have different definitions of matter/radiation energy density than what we've implemented, usually because you're doing some funny counting with a nonminimally coupled model. You can probably just use ours, but do check.
+
+- isvalidconfig is required of all classes. It is used to validate the field configuration of a model. The most obvious example is in F(R) models where F'' = 0, which is an invalid configuration.
+
+
+Step #4.
+Go to <name>.cpp. You will need to add an include statement for your header file, and code up the functions that you need. Note that pressure and energydensity are required functions in order for the getstate routine to work. The functions that you absolutely need are the following:
+
+- derivatives
+- init
+- pressure
+- energy density
+
+Below, we have a template for your <name>.cpp file. A number of functions are likely very similar to LambdaCDM or Quintessence in the way that they compute, for example, H and \dot{H}. You can probably copy a lot of code from those classes.
+
+
+Step #5.
+Go to the makefile (in the debug directory). At the end of the OBJECTS line, add "<name>.o". This makes sure that your code is compiled.
+
+Go to evolve.cpp. Under where it says "Set up the model class", add the following code to the if statement.
+
+else if (parsestring == "<Name>")
+	myModel = new <Name>();
+
+Go to evolve.h. Make sure to include <name>.h along with the rest of the includes.
+
+
+Step #6 (Optional).
+Go to params.ini. Down the bottom, make a section as follows:
+
+[<Name>]
+# Contains parameters for <Name> model.
+
+You can then store initialization parameters in the ini file, which can be read in from the init function using functions:
+init.getiniDouble("keyname", default_value, section)
+init.getiniString("keyname", default_value, section)
+init.getiniInt("keyname", default_value, section)
+init.getiniBool("keyname", default_value, section)
+
+
+//////////////////////////////////////
+//
+//  Template for <name>.cpp below. You can do a find/replace on <name> and <Name>
+//
+//////////////////////////////////////
+
+#include "<name>.h"
+
+// The derivatives routine is given the state of the system (a, phi and \dot{\phi}) as well as the parameters of the system,
+// and returns the derivatives (\dot{a}, \dot{\phi}, \ddot{\phi}, \dot{H})
+int <Name>::derivatives(const double data[], double derivs[], Parameters &params) {
+
+	// The first section here is model independent
+
+	// Extract data for easier reading of the code
+	double a = data[0];
+	double a2 = a * a;   // a^2
+	double phi = data[1];
+	double phidot = data[2];
+	double hubble = data[3];
+
+	// Computing \dot{a}, knowing the hubble rate
+	derivs[0] = hubble * a;
+	// Computing \dot{\phi}
+	derivs[1] = phidot;
+
+	// Model dependent code below
+
+	// Computing \ddot{\phi}. This requires solving the scalar equation of motion for \ddot{\phi}.
+	// Your code here
+	derivs[2] = 0;
+
+	// Computing \dot{H}. This requires solving the acceleration equation for \dot{H}.
+	// Your code here
+	derivs[3] = 0;
+
+	// GSL_SUCCESS indicates that the computation was successful. If it failed, look up the appropriate error code in the same enum as GSL_SUCCESS
+	return GSL_SUCCESS;
+}
+
+// Returns the ratio rho_Q/rho_c
+double <Name>::energydensity(const double data[]){
+	// Extract data for easier reading of the code
+	double a = data[0];
+	double phi = data[1];
+	double phidot = data[2];
+	double hubble = data[3];
+
+	// Your code here
+	return 0;
+}
+// Returns the ratio P_Q/rho_c
+double <Name>::pressure(const double data[], const double hdot){
+	// Extract data for easier reading of the code
+	double a = data[0];
+	double phi = data[1];
+	double phidot = data[2];
+	double hubble = data[3];
+
+	// Your code here
+	return 0;
+}
+
+/* This function does a few things:
+ * - Sets the name of the class
+ * - Initializes the value of H using the Friedmann equation
+ * - Returns a log output
+ */
+int <Name>::init(double data[], double time, Parameters &params, IniReader &init, Output &output) {
+
+	// Set the name of the class
+	section = "<Name>";
+
+	// Construct H
+	// Your code here
+	data[3] = 0;
+
+
+    // Print stuff to the log
+    output.printlog("Running <Name> model.");
+    output.printvalue("phi0", data[1]);
+    output.printvalue("phidot0", data[2]);
+
+	// We have success!
+	return 0;
+
+}

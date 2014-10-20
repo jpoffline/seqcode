@@ -1,0 +1,189 @@
+# Parameters file for intDE
+# Lines beginning with # are comments
+# All entries are case sensitive.
+#
+# A section is defined by
+# [sectionname]
+# Once a section is opened, it remains opened until a new section is opened. 
+# Each model module should have its own unique section, defined by its class name.
+
+[Function]
+# These settings are used in the functioning of the program, but have no bearing on the model.
+# This is the starting time for the integration, in scaled conformal time. 
+# There is really no reason to set it away from 0.
+starttime = 0.0
+
+# This is the max runtime of the evolution, again in scaled conformal time.
+# Note that LambdaCDM runs in about 3.23 units of time, so setting this to 10 should be sufficient for almost any model.
+# The integration proceeds until a = 1, or maxtime is used up.
+maxtime = 10.0
+
+# Output directory to log to = ./logdir/, unless specified as absolute
+logdir = logs
+
+# Base name of file to output to (will typically be run0001.dat and run0002.log)
+runname = run
+
+# The number of digits to use in output filenames
+numberpad = 4
+
+# The class to use for consistency checking. "SimpleCheck" is the only option currently implemented. "None" is the default.
+consistencyclass = SimpleCheck
+
+# Addendum for postprocessed data (e.g., run0001d.dat)
+postname = d
+
+# Location of Union2.1 SN1a data (available from http://supernova.lbl.gov/Union/figures/SCPUnion2.1_mu_vs_z.txt)
+# See arXiv:1105.3470 for details on this data set
+union21 = SCPUnion2.1_mu_vs_z.txt
+
+# Which combination of data sets do we want to use to construct a combined chi^2?
+# Add the following numbers together to obtain the result you'd like:
+# 1 = SN1a
+# 2 = BAO (using SDSS)
+# 4 = BAO (using SDSSR)
+# 8 = Hubble
+# 16 = WMAP
+# 32 = Planck
+# Eg, to use SN1a, BAO (SDSS) and WMAP, use 1+2+16=19
+chicombo = 19
+
+[Single]
+# These settings only pertain to the code that runs a single evolution
+# Do you want to postprocess the data to obtain various distance measurements and chi^2 values?
+postprocess = true
+# The class to use for data dumping. Current options are: "BasicDump" (the default). ("Print2Memory" is used for parameter sweeps and MCMC runs)
+outputclass = BasicDump
+
+[Sweep]
+# These settings are used when the code is sweeping over a parameter
+# Number of parameters to sweep over (either 1 or 2)
+numparams = 1
+# Show the progress bar?
+progress = true
+
+# First parameter
+# Section the parameter to sweep over is in (note: to sweep over phi0 & phidot0, needs to be cosmology)
+section = Quintessence
+# Parameter to sweep over
+param = mass
+# Lower bound of parameter
+lower = 0.1
+# Upper bound of parameter
+upper = 1.3
+# Steps to take
+steps = 500
+
+# Second parameter (not used if numparams = 1)
+# Section the parameter to sweep over is in (note: to sweep over phi0 & phidot0, needs to be cosmology)
+sectionb = LinearW
+# Parameter to sweep over
+paramb = wa
+# Lower bound of parameter
+lowerb = -3
+# Upper bound of parameter
+upperb = 2.2
+# Steps to take
+stepsb = 500
+
+[MCMC]
+# Options regarding the function of the MCMC
+#########
+# Output options
+# Default output directory for the chains
+chaindir = chains
+# Output subdirectory for this run
+chainsubdir = run
+# File name containing priors
+priorsfile = priors.txt
+# Prefix for output file names
+chainprefix = chain
+# Show the progress bar?
+progress = true
+#########
+# MCMC options
+# How many MCMC steps to take?
+MCMCnumsteps = 40000
+# How many MCMC chains?
+numchains = 1
+# How many MCMC steps to burn?
+MCMCburninsteps = 4000
+
+
+[Cosmology]
+# These are settings that describe the cosmology
+# Photon temperature today (2.72548 K)
+Tgamma = 2.72548
+# Omega_matter*h^2 today
+Omegamh2 = 0.137
+# Omega_baryons*h^2 today (must be less than Omegam; set to Omegam if greater)
+Omegabh2 = 0.02240
+# Omega_curvature*h^2 today
+Omegakh2 = 0.0
+# Number of effective relativistic species
+Neff = 3.046
+# The values of phi and \dot{\phi} need to be set based on the model. The defaults are rather meaningless.
+phi0 = 4.0
+phidot0 = 0.1
+# Initial redshift to begin at
+zInit = 1.0e4
+# The desired value of the Hubble parameter today, given as H_0 = h * 100 km/s/Mpc (used in chi^2 calculation)
+desiredh = 0.7
+# Error on the Hubble value (used in chi^2 calculations)
+sigmah = 0.2
+# This chooses the model name. The model name must be the same as the class name for that model.
+# LambdaCDM is the default value, which will be used if the model is not found.
+# Other models that are currently implemented include LinearW, Quintessence, Kessence, KGB, Horndeski and FR.
+model = Quintessence
+
+[LambdaCDM]
+# These settings are used in the LambdaCDM model
+# This is Omega_Lambda today
+OmegaLambda = 0.721
+# Should we set Omega_Lambda to exactly give the desired h?
+precise = true
+
+[LinearW]
+# These settings are used with the LinearW model with equation of state w(a) = w0 + wa (1 - a)
+# This is w0
+wnaught = -1.0
+# This is wa
+wa = 0.0
+# This is Omega_Lambda today
+OmegaLambda = 0.7
+# Should we set Omega_Lambda to exactly give the desired h?
+precise = true
+
+[Quintessence]
+# These settings are used with the Quintessence model
+# Potential type. 0 = Massive, 1 = Lambda \phi^4, 2 = exponential, 3 = user defined (must include in source code)
+PotentialType = 3
+# Mass of field. Potential is m^2 phi^2 / 2 = \alpha m_P^2 H_0^2 \tilde{\phi}^2 / 2 in dimensionless quantities
+# Specify the form of alpha. Note that a negative number corresponds to an imaginary (tachyonic) mass
+mass = 0.1
+# Lambda in lambda phi^4 theory. 
+# Potential is m^2 phi^2 + lambda phi^4 
+# = \alpha m_P^2 H_0^2 \tilde{\phi}^2 / 2 + \lambda m_P^2 H_0^2 \tilde{\phi}^4 in dimensionless quantities
+# Specify \lambda
+lambda = 1.0
+# Exponential function. The potential takes the form U = \alpha m_P^2 H_0^2 exp (- \beta \tilde{\phi})
+# Specify \alpha and \beta 
+alpha = 1.0
+beta = 1.0
+
+[Kessence]
+# These settings are used with the Kessence model.
+# These are just some parameters that may be used in a k-essence model.
+lambda = 2.0
+alpha = 1.0
+beta = 1.0
+n = 2
+
+[KGB]
+# Contains parameters for the KGB model.
+
+[Fr]
+# Contains parameters for the F(R) model.
+
+[Horndeski]
+# Contains parameters for the Horndeski model.
