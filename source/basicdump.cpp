@@ -44,11 +44,11 @@ void BasicDump::printheading() {
 void BasicDump::printstep(const double data[], const double time, const double status[]) {
 
 	// We are just dumping everything here, except for consistency flags
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 17; i++)
 		*myData << status[i] << ", ";
-//	*myData << status[16] << endl;
+	*myData << status[17] << endl;
 	// Make it also print out Ricci scalar
-	*myData << status[16] << ", " << 6.0 * (status[4] + status[3] * status[3]) / status[1] / status[1] << endl;
+	//*myData << status[16] << ", " << 6.0 * ( status[4] + status[3] * status[3] ) / status[1] / status[1] << endl;
 
 }
 

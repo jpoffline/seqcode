@@ -20,7 +20,7 @@
    * 14 P_Q / rho_c
    * 15 w_Q
    * 16 Error
-
+   * 17 R
    This routine should be largely model independent, and as such is included in the abstract Model class.
 
  */

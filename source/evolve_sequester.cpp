@@ -76,7 +76,6 @@ vector<double> doEvolution(IniReader& inifile, Parameters& params, Output& outpu
     int result = 0; // For information coming back from functions
 	
 	
-
     //********************//
     // Initial Conditions //
     //********************//
@@ -127,14 +126,10 @@ vector<double> doEvolution(IniReader& inifile, Parameters& params, Output& outpu
     // Do the evolution!
 	// Vector to hold returned values
 	// entry 1 = "result", entry 2 = "histintRicci"
-	vector<double> returns;
+	vector<double> returns = BeginEvolution(myIntegrator, myIntParams, data, starttime, endtime, output, *myChecker, hubble, redshift, RT, sma,params);
 	
-    returns = BeginEvolution(myIntegrator, myIntParams, data, starttime, endtime, output, *myChecker, hubble, redshift, RT, sma,params);
 	result = int(returns[0]);
-	// The historic average of the Ricci Scalar, <R>
-	double histintRicci = returns[1]; 	
-	double lastRicci = returns[2];
-	double lasta = returns[3];
+
     //*********************************//
     // Clean up of Hubble and Redshift //
     //*********************************//
@@ -254,17 +249,8 @@ vector<double> doEvolution(IniReader& inifile, Parameters& params, Output& outpu
     delete myChecker;
     delete myModel;
 
-    // Return the result of the evolution
-	vector<double> results;
-	results.push_back(0);
-	results.push_back(0);
-	results.push_back(0);	
-	results.push_back(0);		
-	results[0] = result;
-	results[1] = histintRicci;
-	results[2] = lastRicci;
-	results[3] = lasta;
-    return results;
+    // Return the result of the evolution (a vector called "returns")
+    return returns;
 
 }
 
@@ -287,17 +273,16 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
     // hubble and redshift are vectors used for storing this data for the purpose of postprocessing
 
 	vector<double> returns;
-	returns.push_back(0.0);
-	returns.push_back(0.0);
-	returns.push_back(0.0);
-	returns.push_back(0.0);
+	int nreturns = 10;
+	for(int nr = 0; nr < nreturns; nr++)
+		returns.push_back(0.0);
 		
     // We need our own time variable to step forwards
     double time = starttime;
     // The result from the integrator. It returns GSL_SUCCESS (0) when everything works
     int result;
     // An array to hold the status information
-    double status[17];
+    double status[18];
     // And a double to hold the stepsize
     double stepsize;
 
@@ -310,6 +295,8 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	double Seq_vol = 0.0; // zero the measure
 	double Seq_num = 0.0; // zero the numerator integrand
 	double Seq_den = 0.0; // zero the denominator integrand
+	double amax = 0.0;
+	double wnow = 0.0;
 	// END :: JAP: sequestering variables
 
 	
@@ -330,7 +317,7 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	if( smallesta != 1 )
 		akill = true;
     // This is the loop that takes successive integration steps. Halt if we go past the maximum evolution time.
-	int aflag = 0;
+	int aflag = 0;	
 	
     while (time < endtime) {
 
@@ -366,7 +353,19 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
         // Add the hubble and redshift values to the vectors
         hubble.push_back(status[3]);
         redshift.push_back(status[2]);
+		
+		// Get the scale factor
+		a = status[1];
+		
+		// Compute Ricci Scalar in conformal time,
+		RicciScalar = 6.0 * ( status[4] + status[3] * status[3] - modp.rhoK() * modp.getconH0() * modp.getconH0() ) / a / a;
 
+		// Compute measure in conformal time,
+		Seq_vol = a * a * a * a;
+		
+		// Dump the Ricci scalar into the last slot of "status" -- mainly to be printed out
+		status[17] = RicciScalar*Seq_vol;
+		
         // Get the output class to write out the state of the system
 		output.printstep(data, time, status);
 
@@ -396,6 +395,10 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 			std::cout << "refining step-size on the upwards stretch before crunch" << std::endl;
         }
 		*/
+		
+		if( a > amax)
+			amax = a;
+		
 		// Refine step-size near crunch singularity
         stepsize = integrator.getstepsize();
         if (data[0] + 20.0 * data[3] * stepsize < 0 ) {
@@ -409,6 +412,8 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 		// Check to find out if we are "in the future"
 		if( a > 1 )
 			inFuture = true;
+		if(!inFuture)
+			wnow = status[15];
 		
 		// When nearing the crunch, start to refine the stepsize
 		if(data[0] < 0.08 && inFuture)
@@ -416,29 +421,15 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 		
 		if(data[0] < 0.01 && inFuture)
 			integrator.setstepsize( 0.0000000000001 * integrator.getstepsize() );
-		
-		// Get the scale factor
-		a = status[1];
-		
-		// Compute Ricci Scalar in conformal time,
-		RicciScalar = 6.0 * ( status[4] + status[3] * status[3] + modp.rhoK()) / a / a;
-		
-		// Compute measure in conformal time,
-		Seq_vol = a * a * a * a;
+				
 		
 		// Compute the numerator-term of the constraint for sequestering
 		Seq_num += RicciScalar * Seq_vol;
 		
 		// Compute the denominator-term of the constraint for sequestering
 		Seq_den += Seq_vol;
-
+			
 		// Reasons to stop...
-
-		// If R > Mpl, then stop
-		//if( RicciScalar < - RicciThreshold )
-		//	break;
-		
-		
 
 		if( a < smallesta && inFuture && akill ){
 			aflag = 1;
@@ -452,12 +443,16 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 		
 		// \JAP
 				
+		if(  (RicciScalar > 1E10 || RicciScalar < -1E10) && inFuture ){
+			break;
+		}
+		
     }
 		
 	// Construct value of the historic integral of the Ricci Scalar, 
 	// to be sent back to calling routine.	
 	double histintRicci = Seq_num / Seq_den;
-	
+
     // Take a look at the consistency of the final state
     check.checkfinal(data, time, params, output, status);
 
@@ -465,9 +460,12 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	if (returns[0] == 0)
 		returns[0] = 0;
 	
-	returns[1] = histintRicci;
-	returns[2] = RicciScalar;
-	returns[3] = data[0] * (double)aflag;
+	returns[1] = histintRicci; // <R>
+	returns[2] = RicciScalar; // R_end
+	returns[3] = data[0]; // a_end
+	returns[4] = amax;	// a_max
+	returns[5] = wnow;
+	returns[6] = time;
 	return returns;
 	
 }

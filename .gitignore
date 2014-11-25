@@ -2,3 +2,4 @@
 /chains/
 debug/*.o
 logs/*.log
+log*/*

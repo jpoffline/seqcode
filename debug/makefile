@@ -7,12 +7,12 @@ CC = g++
 
 CFLAGS = $(OPTIMIZE) $(WARNINGS) -std=gnu++03
 INC = -I/usr/local/include
-LIBS = -L/usr/local/lib -lm -lgsl -lgslcblas -L/usr/local/boost -lboost_filesystem -lboost_system -lboost_timer
+LIBS = -L/usr/local/lib -lm -lgsl -lgslcblas -L/usr/local/include/boost -lboost_filesystem -lboost_system -lboost_timer
 
 # Make rules
 
 OBJECTS = integrate.o quintessence.o basicdump.o lambdaCDM.o simplecheck.o model.o linearw.o kessence.o process.o KGB.o params.o evolve_sequester.o fr.o inireader.o print2memory.o
-OBJECTMAIN = main_new.o 
+OBJECTMAIN = main_new_sweep.o 
 
 .PHONY: all
 all: main 
