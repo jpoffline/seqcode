@@ -7,7 +7,7 @@ CC = g++
 
 CFLAGS = $(OPTIMIZE) $(WARNINGS) -std=gnu++03
 INC = -I/usr/local/include
-LIBS = -L/usr/local/lib -lm -lgsl -lgslcblas -L/usr/local/include/boost -lboost_filesystem -lboost_system -lboost_timer
+LIBS = -L/usr/local/lib -lm -lgsl -lgslcblas -L/usr/local/boost -lboost_filesystem -lboost_system -lboost_timer
 
 # Make rules
 

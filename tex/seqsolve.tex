@@ -1,0 +1,183 @@
+\documentclass[amsmath,amssymb,12pt,eqsecnum]{revtex4}
+\usepackage{ graphicx, amsmath, amsmath, amssymb, subfigure}
+\input{defs}
+\newcommand{\comment}[1]{{\color{red}[#1]}}
+\newcommand{\note}[1]{{\color{blue}#1}}
+\newcommand{\todo}[1]{{\color{blue}#1}}
+\newcommand{\Mpsq}[0]{{\qsubrm{M}{pl}^2}}
+\usepackage[breaklinks, colorlinks, citecolor=blue]{hyperref}
+\linespread{1}
+\begin{document}
+
+ 
+
+\title{Integrating the sequestering equations of motion}
+\author{Jonathan A. Pearson}
+\email{j.pearson@nottingham.ac.uk}
+\affiliation{School of Physics \& Astronomy, University of Nottingham, Nottingham, NG7 2RD, U.K.}
+
+\date{\today}
+
+
+\begin{abstract} 
+In conversation with Adam Moss, Tony Padilla, Nemanja Kaloper.
+
+\end{abstract}
+
+\maketitle
+\section{Introduction}
+We use the $\phi$-gauge. See \cite{Kaloper:2013zca, Kaloper:2014dqa, Kaloper:2014fca} and \cite{Avelino:2014nqa, Avelino:2014aea, Kluson:2014tma}.  The equations of motion in spatially flat FRW space-time are
+\bse
+\label{frw-eqnsofmotion}
+\bea
+3\Mpsq H^2 = \qsubrm{\rho}{m} + \half \dot{\phi}^2 + \qsubrm{m}{slope}^3\phi,
+\eea
+\bea
+3\Mpsq \dot{H} = - \frac{3}{2}\left( \qsubrm{\rho}{m} + \qsubrm{p}{m} + \dot{\phi}^2\right),
+\eea
+\bea
+\ddot{\phi} + 3 H \dot{\phi} + \qsubrm{m}{slope}^3=0,
+\eea
+\ese
+and are subject to the constraint
+\bea
+\label{eq:seq_constraint}
+\langle\dot{\phi}^2\rangle - 4\qsubrm{m}{slope}^3 \expec{\phi} + \expec{3\qsubrm{p}{m} - \qsubrm{\rho}{m}} = 0.
+\eea
+The symbol $\expec{Q}$ is defined as the historic integral; in the FRW background this is
+\bea
+\expec{Q} \defn \frac{\int_{\qsubrm{t}{bang}}^{\qsubrm{t}{crunch}} \dd t \,a(t)^3\, Q(t)}{\int_{\qsubrm{t}{bang}}^{\qsubrm{t}{crunch}} \dd t\, a(t)^3}.
+\eea
+Note that the start-point of the integrals is the ``big bang'', and the end-point is the ``big-crunch''. The dark energy theory considered here is guaranteed to have a crunch-ending.
+The subscript ``m'' denotes {\it all} matter quantities (e.g., CDM and radiation).
+
+The $\phi$-gauge condition requires that $\expec{{T^{\mu}}_{\nu}}=0$. From the field equation, this means that the historic average of the Ricci scalar must vanish:
+\bea
+\label{eq:vanish_R}
+\expec{R} = 0.
+\eea
+The constraint (\ref{eq:seq_constraint}) is equivalent to (\ref{eq:vanish_R}).
+
+\section{Methods of solving}
+Solving the equations of motion (\ref{frw-eqnsofmotion}) is ``easy'' (for example, see the  {\tt deevolve} code I've written with J. Bloomfield). However, the constraint (\ref{eq:seq_constraint}) does not have an obvious implementation strategy. 
+%\subsection{Re-writing}
+%Can the equations of motion be re-written to automatically satisfy (\ref{eq:seq_constraint})?  We have in mind ``constrained field-theory'' problems whereby a given set of boundary conditions and some conserved quantity (like charge, or winding number) is used to obtain the field configurations for solitons. These are done by writing down an energy functional and obtaining the field configurations which minimize the energy with a given value of (for example) charge. Here, we are interested in field configurations which minimise the action, with a given value of ``constraint''.
+\subsection{MCMC method}
+An MCMC method may work: for a given set  of ``parameters'',
+\bea
+\mathcal{P}= \left\{ \mbox{inital conditions}, \mbox{model parameters}\right\},
+\eea
+we could evolve the equations of motion (\ref{frw-eqnsofmotion}), and then compute the value of 
+\bea
+\mathcal{C} \defn \langle\dot{\phi}^2\rangle - 4\qsubrm{m}{slope}^3 \expec{\phi} + \expec{3\qsubrm{p}{m} - \qsubrm{\rho}{m}}.
+\eea
+This would populate the space $\mathcal{P}$ with values of $\mathcal{C}$; those which are compatible with the sequestering scenario have $\mathcal{C}=0$. {\it If} there exists  some sensible measure on $\mathcal{P}$ which yields $|\mathcal{C}| \ll 1$ on some sub-manifold, then MCMC can be used to ``hone in on'' the sequestering-favoured regions of $\mathcal{P}$. Since we do not know the location of  seq-fav-regions, we will treat the entire space $\mathcal{P}$ with equality.
+
+The MCMC engine would search the space $\mathcal{P}$ for regions which minimize $|\mathcal{C}|$. Finding the minimal regions is ``all this method could do''.
+\section{Implementing into {\tt deevolve}}
+We will use the {\tt deevolve} code to evolve the equations of motion -- the equations are evolved in conformal time. A given set of parameters (i.e., scalar field initial conditions, and cosmological parameters) are used to solve the equations of motion. We evolve untill the Universe collapses (i.e., $a=0$).
+
+
+The Ricci scalar in conformal time is given by
+\bea
+R = \frac{6}{a^2}\left( \dot{\hct} + \hct^2 + k^2\right).
+\eea
+Also, the measure in conformal time is
+\bea
+\sqrt{-g} = a(\tau)^4.
+\eea 
+The historic average in conformal time is
+\bea
+\expec{Q} \defn \frac{\int_{\qsubrm{\tau}{bang}}^{\qsubrm{\tau}{crunch}} \dd \tau \,a(\tau)^4\, Q(\tau)}{\int_{\qsubrm{\tau}{bang}}^{\qsubrm{\tau}{crunch}} \dd \tau\, a(\tau)^4}.
+\eea
+The crunch-time $\qsubrm{\tau}{crunch}$ is defined to be where $a\left(\qsubrm{\tau}{crunch}\right)=0$.
+
+\section{Numerical solutions}
+We have integrated the equations of motion (in conformal time), using {\tt deevolve}. The material content is: matter, radiation, and quintessence scalar field with linear potential (see, e.g., \cite{Kallosh:2003bq}). This yields a number of parameters used to parameterize the solutions: including $\qsubrm{\Omega}{m}, \qsubrm{\Omega}{r}$, the parameter $\qsubrm{m}{slope}$, and the initial values of the scalar $\phi_0, \dot{\phi}_0$. We note that at this stage ``solutions are obtained'' which are not necessarily sequestering. That is, the solutions to the equations of motion do not necessarily satisfy $\expec{R}=0$. In \fref{fig:evplots1} we plot the evolution of various quantities; the different lines correspond to different  initial values of the scalar field.
+
+We will compute
+\bea
+C\left( \qsubrm{\tau}{max}\right) \defn \frac{\int_{\qsubrm{\tau}{start}}^{\qsubrm{\tau}{max}} \dd\tau\,a^4\,R}{\int_{\qsubrm{\tau}{start}}^{\qsubrm{\tau}{max}} \dd\tau\,a^4} = \expec{R}\left( \qsubrm{\tau}{max}\right),
+\eea
+and understand the convergence properties of $C\left( \qsubrm{\tau}{max}\right)$ as the ``crunch'' is approached. These are plotted in \fref{fig:num_solns_deevolve}.
+
+\begin{figure}[!t]
+      \begin{center}
+{\includegraphics[scale=0.8]{images/evPlots.pdf}}
+      \end{center}
+\caption{The evolution of various quantities; each line corresponds to a different value of $\phi_0$, as shown in the legend. We have fixed $\dot{\phi}_0 = 0.01, \qsubrm{m}{slope} = 1$; all other cosmological parameters have values as given in the table -- note that these have zero spatial curvature. In the top right panel we show the evolution of the scale factor, $a(\tau)$: it is clear that these models describe expanding universes which then collapse (when $a=0$); we have drawn on a line at $a=1$, which corresponds to ``today''. It is also worth noting the total ``equation of state'' parameter, $\qsubrm{w}{tot}$ which we plot in the third plot down on the left. It shows that the scalar field acts like a ``stiff fluid'', with $w=1$ at the crunch.} \label{fig:evplots1}
+\end{figure}
+
+\begin{figure}[!t]
+      \begin{center}
+{\includegraphics[scale=0.8]{images/Cplot.pdf}}
+      \end{center}
+\caption{Plot to enhance understanding of the convergence of the historic average, near the crunch singularity; each curve has identical parameter values to those in \fref{fig:evplots1}. It is clear that $\expec{R}$ has a zero for $\qsubrm{\tau}{max}\sim 6$, but it quickly becoms very negative as the crunch is approached. }\label{fig:num_solns_deevolve}
+\end{figure}
+
+{\renewcommand{\arraystretch}{1.4}
+\begin{table}%[b] 
+%\begin{andptabular}{X[4c]X[4c] }%
+\begin{center}
+\begin{tabular}{||c |  c ||}
+%{Summary  of    commonly used symbols}
+\hline
+\textbf{Parameter} & \textbf{Fiducial value} \\
+\hline
+Hubble, $h$ ($H_0 = 100h$km/s/Mpc) & 0.7 \\\hline
+Current matter fraction, $\qsubrm{\Omega}{m}h^2$ &0.137  \\\hline
+Current baryon fraction, $\qsubrm{\Omega}{b}h^2$ &0.02240  \\\hline
+Current curvature fraction, $\qsubrm{\Omega}{k}h^2$ &0.0 \\\hline
+Effective rel.dofs, $\qsubrm{N}{eff}$ &3.046 \\\hline
+Photon temperature, $T_{\gamma}$ & 2.72548 \\\hline
+\end{tabular}\caption{Fiducial values of the parameters}\label{tab:fid_params}
+\end{center}
+\end{table}
+}
+
+\section{Constraints}
+\subsection{Using {\tt deevolve}}
+Note that {\tt deevolve} does not have nuisance parameters in the likelihood computation. \comment{Can we modify {\tt COSMOMC} to not run {\tt CAMB}?}
+
+In \fref{fig:const_fixed_cosm_deevolve} we plot the constraints on the dark energy parameters -- note that these arent selected to be ``sequestering solutions''.
+\begin{figure}[!t]
+      \begin{center}
+{\includegraphics[scale=0.4]{images/tri_run_10000.pdf}}
+      \end{center}
+\caption{Constraints using WMAP+BAO+SN1a. All other cosmological parameters are held fixed to their fiducual values, just for simplicity. Also: these have not been selected to be ``sequestering'' solutions. }\label{fig:const_fixed_cosm_deevolve}
+\end{figure}
+
+\note{
+\section{TO DO}
+- Planck cut-off for $R$ \& testing sequestering solutions
+
+\subsection{Finding sequestering solutions}
+Suppose we have evolved the equations $\{\mathcal{E}\}$, for a given set of parameters $\{\mathcal{P},p\}$. This gives a value of the constraint, $C \defn \expec{R}$. We then want to find a new value of the parameter $p$ that goes toward minimizing the value of $C$. That is, we want to find the root of the function $C(p)$. We can do this with Newton-Raphson's method, which tells us how to pick the next value of the parameter, based on the current value of $C$ and its derivative,
+\bea
+p_{n+1} = p_n - \frac{C(p_n)}{C'(p_n)}.
+\eea
+We can approximate the derivative via finite differences,
+\bea
+C'(p_n) \approx \frac{C(p_n + \Delta) - C(p_n - \Delta)}{2\Delta}
+\eea
+}
+
+\clearpage
+\section{Solutions}
+We have integrated the equations of motion, for a set of values of the mass $m^3$ and curvature $\qsubrm{\Omega}{k}h^2$ (all other parameters are set to their fiducial values). Results are given in \fref{fig:plots1}. It is apparent that the maximum size, and age, of the Universe is relatively unnaffected by the spatial curvature. All of these models give $w\approx -1$.
+
+
+\begin{figure}[!t]
+      \begin{center}
+\subfigure[\, $\qsubrm{a}{max} $]{\includegraphics[scale=0.5]{images/sweep_test22_amax.pdf}}
+\subfigure[\, $\qsubrm{t}{max} $]{\includegraphics[scale=0.5]{images/sweep_test22_tmax.pdf}}
+\subfigure[\, $10^3(1+w_0)$]{\includegraphics[scale=0.5]{images/sweep_test22_w0.pdf}}
+\subfigure[\, $\log_{10}|\langle R\rangle|$]{\includegraphics[scale=0.5]{images/sweep_test22.pdf}}
+      \end{center}
+\caption{ Various diagnostic quantities as functions of $m^3$ and the curvature $\qsubrm{\Omega}{k}h^2$. In (d) it is clear that there is some subset of the $(m^3, \qsubrm{\Omega}{k}h^2)$-space which naturally yields sequestering solutions: these are where $\langle R\rangle = 0$, and lie along the band which is apparent. We also note that for all of these models, the current value of the dark energy equation of state parameter, $w_0$, is very close to $-1$. In (a) we show that the smaller values of $m^3$ produce bigger Universes (before their inevitible collapse) -- these bigger Universes have total age given in (b). Note that the ''band'' of $\langle R\rangle = 0$ does not show up via any features in any of the plots in (a)-(c).}\label{fig:plots1}
+\end{figure}
+
+\bibliographystyle{JHEP}
+\bibliography{refs}
+
+\end{document}

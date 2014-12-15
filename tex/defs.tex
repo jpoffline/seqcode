@@ -1,0 +1,106 @@
+ 
+\newcommand{\vphi}[0]{\delta\phi}
+\newcommand{\lpa}[0]{\lp A}
+\newcommand{\dlg}[0]{\lp g}
+
+\newcommand{\depg}[0]{\ep g}
+\newcommand{\virt}[0]{\hat{\delta}}
+\newcommand{\Dvphi}[1]{\nabla_{#1}\vphi}
+\newcommand{\DDvphi}[2]{\nabla_{#1}\nabla_{#2}\vphi}
+
+\newcommand{\Dvvphi}[1]{\nabla_{#1}\virt\vphi}
+\newcommand{\DDvvphi}[2]{\nabla_{#1}\nabla_{#2}\virt\vphi}
+
+\newcommand{\tmat}[4]{\bigg( \begin{array}{cc} #1 & #2 \\ #3 & #4 \end{array}\bigg)}
+\newcommand{\expec}[1]{\left\langle #1\right\rangle}
+\newcommand{\half}[0]{\frac{1}{2}}
+\newcommand{\cs}[3]{\Gamma^{#1}_{\,\,\,\, #2#3}}
+
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\ld}[0]{\mathcal{L}}
+\newcommand{\md}[0]{\mathcal{M}}
+\newcommand{\dd}[0]{\textrm{d}}
+\newcommand{\defn}[0]{\equiv}
+\newcommand{\diag}[0]{\textrm{diag}}
+\newcommand{\qsubrm}[2]{{#1}_{\scriptscriptstyle{\textrm{#2}}}}
+
+\newcommand{\subsm}[2]{{#1}_{\scriptscriptstyle{#2}}}
+\newcommand{\supsm}[2]{{#1}^{\scriptscriptstyle{#2}}}
+\newcommand{\qsuprm}[2]{{#1}^{\scriptscriptstyle\textrm{#2}}}
+\newcommand{\subpsm}[3]{\subsm{#1}{#2}^{\scriptscriptstyle #3}}
+ 
+
+\newcommand{\symmb}[0]{\varrho}
+\newcommand{\AW}[0]{A_{\mathcal{W}}}
+\newcommand{\BW}[0]{B_{\mathcal{W}}}
+\newcommand{\CW}[0]{C_{\mathcal{W}}}
+\newcommand{\DW}[0]{D_{\mathcal{W}}}
+\newcommand{\EW}[0]{E_{\mathcal{W}}}
+
+\newcommand{\AP}[0]{A_{\mathcal{P}}}
+\newcommand{\BP}[0]{B_{\mathcal{P}}}
+\newcommand{\CP}[0]{C_{\mathcal{P}}}
+\newcommand{\DP}[0]{D_{\mathcal{P}}}
+\newcommand{\EP}[0]{E_{\mathcal{P}}}
+\newcommand{\FP}[0]{F_{\mathcal{P}}}
+\newcommand{\GP}[0]{G_{\mathcal{P}}}
+
+\newcommand{\sol}[0]{\ld_{\scriptscriptstyle\{2\}}}
+
+\newcommand{\lcdm}[0]{$\Lambda$CDM}
+
+\newcommand{\coup}[0]{\mathcal{Q}}
+\newcommand{\vmkin}[0]{\mathcal{K}}
+
+\newcommand{\pis}[0]{ {\Pi}^{\scriptscriptstyle\rm{S}}}
+\newcommand{\xis}[0]{ {\xi}^{\scriptscriptstyle\rm{S}}}
+\newcommand{\xisdot}[0]{ {\dot{\xi}}^{\scriptscriptstyle\rm{S}}}
+ 
+\newcommand{\nphiu}[1]{\nabla^{#1}\phi}
+\newcommand{\nphid}[1]{\nabla_{#1}\phi}
+
+\newcommand{\gbm}[1]{\bm{#1}}
+\newcommand{\rbm}[1]{{\bf{#1}}}
+\newcommand{\ci}[0]{\textrm{i}}
+ \newcommand{\kin}[0]{{\mathcal{X}}}
+\newcommand{\hct}[0]{\mathcal{H}}
+\renewcommand{\figurename}{Figure}
+\newcommand{\ep}[0]{{ {\delta}_{\scriptscriptstyle{\rm{E}}}}}
+\newcommand{\lp}[0]{{ {\delta}_{\scriptscriptstyle{\rm{L}}}}}
+\def\be{\begin{equation}}
+\def\ee{\end{equation}}
+\def\bea{\begin{eqnarray}}
+\def\eea{\end{eqnarray}}
+\def\bse{\begin{subequations}}
+\def\ese{\end{subequations}}
+\newcommand{\lied}[1]{\pounds_{#1}}
+\newcommand{\spnab}[0]{{\overline{\nabla}}{}}
+
+
+
+%\renewcommand{\vphi}{\varphi}
+
+\newcommand{\sech}[0]{\textrm{ sech}}
+\newcommand{\fref}[1]{{Figure \ref{#1}}}
+\newcommand{\tref}[1]{{Table \ref{#1}}}
+\newcommand{\secref}[1]{{section \ref{#1}}}
+\newcommand{\Secref}[1]{{Section \ref{#1}}}
+% PUT CATCH ON THE END OF SQUARE-ROOT SYMBOLS
+\newcommand{\rsbb}[2]{#1_{\mathbb{#2}}}
+
+\newcommand{\dg}[0]{\delta g}
+\let\oldsqrt\sqrt
+% it defines the new \sqrt in terms of the old one
+\def\sqrt{\mathpalette\DHLhksqrt}
+\def\DHLhksqrt#1#2{%
+\setbox0=\hbox{$#1\oldsqrt{#2\,}$}\dimen0=\ht0
+\advance\dimen0-0.2\ht0
+\setbox2=\hbox{\vrule height\ht0 depth -\dimen0}%
+{\box0\lower0.4pt\box2}}
+ 
+ 
+ \newcommand{\Af}[0]{\mathsf{A}}
+\newcommand{\Bf}[0]{\mathsf{B}}
+\newcommand{\Cf}[0]{\mathsf{C}}
+\newcommand{\Df}[0]{\mathsf{D}}
+\newcommand{\Ef}[0]{\mathsf{E}}

@@ -1,0 +1,38 @@
+\providecommand{\href}[2]{#2}\begingroup\raggedright\begin{thebibliography}{1}
+
+\bibitem{Kaloper:2013zca}
+N.~Kaloper and A.~Padilla, {\it {Sequestering the Standard Model Vacuum
+  Energy}},  {\em Phys.Rev.Lett.} {\bf 112} (2014) 091304,
+  [\href{http://xxx.lanl.gov/abs/1309.6562}{{\tt arXiv:1309.6562}}].
+
+\bibitem{Kaloper:2014dqa}
+N.~Kaloper and A.~Padilla, {\it {Vacuum Energy Sequestering: The Framework and
+  Its Cosmological Consequences}},
+  \href{http://xxx.lanl.gov/abs/1406.0711}{{\tt arXiv:1406.0711}}.
+
+\bibitem{Kaloper:2014fca}
+N.~Kaloper and A.~Padilla, {\it {'The End'}},
+  \href{http://xxx.lanl.gov/abs/1409.7073}{{\tt arXiv:1409.7073}}.
+
+\bibitem{Avelino:2014nqa}
+P.~Avelino, {\it {Vacuum energy sequestering and cosmic dynamics}},  {\em
+  Phys.Rev.} {\bf D90} (2014), no.~10 103523,
+  [\href{http://xxx.lanl.gov/abs/1410.4555}{{\tt arXiv:1410.4555}}].
+
+\bibitem{Avelino:2014aea}
+P.~Avelino, {\it {Could the dynamics of the Universe be influenced by what is
+  going on inside black holes?}},
+  \href{http://xxx.lanl.gov/abs/1411.0104}{{\tt arXiv:1411.0104}}.
+
+\bibitem{Kluson:2014tma}
+J.~Kluson, {\it {Note About Canonical Formalism for Normalized Gravity And
+  Vacuum Energy Sequestering Model}},
+  \href{http://xxx.lanl.gov/abs/1411.7501}{{\tt arXiv:1411.7501}}.
+
+\bibitem{Kallosh:2003bq}
+R.~Kallosh, J.~Kratochvil, A.~D. Linde, E.~V. Linder, and M.~Shmakova, {\it
+  {Observational bounds on cosmic doomsday}},  {\em JCAP} {\bf 0310} (2003)
+  015, [\href{http://xxx.lanl.gov/abs/astro-ph/0307185}{{\tt
+  astro-ph/0307185}}].
+
+\end{thebibliography}\endgroup

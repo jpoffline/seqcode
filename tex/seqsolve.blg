@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2012)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: seqsolve.aux
+The style file: JHEP.bst
+Database file #1: refs.bib
+You've used 7 entries,
+            2195 wiz_defined-function locations,
+            555 strings with 4347 characters,
+and the built_in function-call counts, 1557 in all, are:
+= -- 161
+> -- 53
+< -- 0
++ -- 21
+- -- 14
+* -- 119
+:= -- 223
+add.period$ -- 7
+call.type$ -- 7
+change.case$ -- 7
+chr.to.int$ -- 0
+cite$ -- 7
+duplicate$ -- 83
+empty$ -- 132
+format.name$ -- 14
+if$ -- 388
+int.to.chr$ -- 0
+int.to.str$ -- 7
+missing$ -- 24
+newline$ -- 24
+num.names$ -- 7
+pop$ -- 25
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 56
+stack$ -- 0
+substring$ -- 62
+swap$ -- 33
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 10
+width$ -- 8
+write$ -- 64
