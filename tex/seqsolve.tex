@@ -77,6 +77,10 @@ The MCMC engine would search the space $\mathcal{P}$ for regions which minimize 
 \section{Implementing into {\tt deevolve}}
 We will use the {\tt deevolve} code to evolve the equations of motion -- the equations are evolved in conformal time. A given set of parameters (i.e., scalar field initial conditions, and cosmological parameters) are used to solve the equations of motion. We evolve untill the Universe collapses (i.e., $a=0$).
 
+The action is
+\bea
+S = \qsubrm{m}{P}^2 \int \dd^4x\,\sqrt{-g}\left[ \half R + \hct_0^2 \left( - \frac{1}{2\hct^2_0}(\partial\phi)^2 - V(\phi) \right) \right] + \qsubrm{S}{m}[g_{\mu\nu}; \Psi]
+\eea
 
 The Ricci scalar in conformal time is given by
 \bea
