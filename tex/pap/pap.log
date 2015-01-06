@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.10.17)  22 DEC 2014 13:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.10.17)  6 JAN 2015 10:33
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**seqsolve.tex
-(./seqsolve.tex
+**pap.tex
+(./pap.tex
 LaTeX2e <2014/05/01>
 Babel <3.9k> and hyphenation patterns for 78 languages loaded.
 (/usr/local/texlive/2014/texmf-dist/tex/latex/revtex4/revtex4.cls
@@ -143,8 +143,8 @@ Class revtex4 Warning: No Society specified, using generic APS style.
 File: aps.rtx 2001/08/02 v4.0 (http://publish.aps.org/revtex4/ for documentatio
 n)
 )
-(/usr/local/texlive/2014/texmf-dist/tex/latex/revtex4/12pt.rtx
-File: 12pt.rtx 2001/08/02 v4.0 (http://publish.aps.org/revtex4/ for documentati
+(/usr/local/texlive/2014/texmf-dist/tex/latex/revtex4/10pt.rtx
+File: 10pt.rtx 2001/08/02 v4.0 (http://publish.aps.org/revtex4/ for documentati
 on)
 )
 (/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/graphicx.sty
@@ -311,8 +311,8 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip54
 )
-(./seqsolve.aux)
-\openout1 = `seqsolve.aux'.
+(./pap.aux)
+\openout1 = `pap.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
 LaTeX Font Info:    ... okay on input line 10.
@@ -331,8 +331,7 @@ LaTeX Font Info:    ... okay on input line 10.
 Class revtex4 Info: Patching LaTeX tabular. on input line 10.
 Class revtex4 Info: cite was not loaded (OK!) on input line 10.
 Class revtex4 Info: multicol was not loaded (OK!) on input line 10.
-
-(/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii
+ (/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count120
 \scratchdimen=\dimen119
@@ -388,9 +387,9 @@ LaTeX Info: Redefining \ref on input line 10.
 LaTeX Info: Redefining \pageref on input line 10.
 LaTeX Info: Redefining \nameref on input line 10.
 
-(./seqsolve.out) (./seqsolve.out)
+(./pap.out) (./pap.out)
 \@outlinefile=\write3
-\openout3 = `seqsolve.out'.
+\openout3 = `pap.out'.
 
 LaTeX Font Info:    Try loading font information for U+msa on input line 27.
 
@@ -401,161 +400,147 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 27.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+) (./pap.toc)
+\tf@toc=\write4
+\openout4 = `pap.toc'.
 
-<images/evPlots.pdf, id=105, 614.295pt x 469.755pt>
-File: images/evPlots.pdf Graphic file (type pdf)
- <use images/evPlots.pdf>
-Package pdftex.def Info: images/evPlots.pdf used on input line 110.
-(pdftex.def)             Requested size: 491.43666pt x 375.80452pt.
 
-Overfull \hbox (23.43666pt too wide) in paragraph at lines 110--111
- [] 
- []
 
-<images/Cplot.pdf, id=106, 289.08pt x 216.81pt>
-File: images/Cplot.pdf Graphic file (type pdf)
- <use images/Cplot.pdf>
-Package pdftex.def Info: images/Cplot.pdf used on input line 117.
-(pdftex.def)             Requested size: 231.2643pt x 173.44823pt.
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 97.
 
-<images/tri_run_10000.pdf, id=110, 1084.05pt x 1084.05pt>
-File: images/tri_run_10000.pdf Graphic file (type pdf)
 
-<use images/tri_run_10000.pdf>
-Package pdftex.def Info: images/tri_run_10000.pdf used on input line 149.
-(pdftex.def)             Requested size: 433.61232pt x 433.61232pt.
- [3] [4 <./images/evPlots.pdf>] [5 <./images/Cplot.pdf>] [6 <./images/tri_run_1
-0000.pdf>]
-<images/sweep_test22_amax.pdf, id=200, 361.35pt x 252.945pt>
-File: images/sweep_test22_amax.pdf Graphic file (type pdf)
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 97.
 
-<use images/sweep_test22_amax.pdf>
-Package pdftex.def Info: images/sweep_test22_amax.pdf used on input line 176.
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\phi' on input line 97.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 97.
+
+[1{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+<images/test22_2_L_GR.pdf, id=99, 361.35pt x 252.945pt>
+File: images/test22_2_L_GR.pdf Graphic file (type pdf)
+
+<use images/test22_2_L_GR.pdf>
+Package pdftex.def Info: images/test22_2_L_GR.pdf used on input line 104.
 (pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
 
-<images/sweep_test22_tmax.pdf, id=201, 361.35pt x 252.945pt>
-File: images/sweep_test22_tmax.pdf Graphic file (type pdf)
-
-<use images/sweep_test22_tmax.pdf>
-Package pdftex.def Info: images/sweep_test22_tmax.pdf used on input line 177.
-(pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
-
-<images/sweep_test22_w0.pdf, id=202, 361.35pt x 252.945pt>
-File: images/sweep_test22_w0.pdf Graphic file (type pdf)
-
-<use images/sweep_test22_w0.pdf>
-Package pdftex.def Info: images/sweep_test22_w0.pdf used on input line 178.
-(pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
-
-<images/sweep_test22.pdf, id=203, 361.35pt x 252.945pt>
-File: images/sweep_test22.pdf Graphic file (type pdf)
-
-<use images/sweep_test22.pdf>
-Package pdftex.def Info: images/sweep_test22.pdf used on input line 179.
-(pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
-
-<images/sweep_test22_2_amax.pdf, id=204, 361.35pt x 252.945pt>
-File: images/sweep_test22_2_amax.pdf Graphic file (type pdf)
-
-<use images/sweep_test22_2_amax.pdf>
-Package pdftex.def Info: images/sweep_test22_2_amax.pdf used on input line 186.
-
-(pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
-
-<images/sweep_test22_2_tmax.pdf, id=205, 361.35pt x 252.945pt>
-File: images/sweep_test22_2_tmax.pdf Graphic file (type pdf)
-
-<use images/sweep_test22_2_tmax.pdf>
-Package pdftex.def Info: images/sweep_test22_2_tmax.pdf used on input line 187.
-
-(pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
-
-<images/sweep_test22_2_w0.pdf, id=206, 361.35pt x 252.945pt>
-File: images/sweep_test22_2_w0.pdf Graphic file (type pdf)
-
-<use images/sweep_test22_2_w0.pdf>
-Package pdftex.def Info: images/sweep_test22_2_w0.pdf used on input line 188.
-(pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
-
-<images/sweep_test22_2_R.pdf, id=207, 361.35pt x 252.945pt>
-File: images/sweep_test22_2_R.pdf Graphic file (type pdf)
-
-<use images/sweep_test22_2_R.pdf>
-Package pdftex.def Info: images/sweep_test22_2_R.pdf used on input line 189.
-(pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
-
-<images/wl/test22_2_HIR.pdf, id=209, 361.35pt x 252.945pt>
+<images/wl/test22_2_HIR.pdf, id=103, 361.35pt x 252.945pt>
 File: images/wl/test22_2_HIR.pdf Graphic file (type pdf)
 
 <use images/wl/test22_2_HIR.pdf>
-Package pdftex.def Info: images/wl/test22_2_HIR.pdf used on input line 196.
+Package pdftex.def Info: images/wl/test22_2_HIR.pdf used on input line 124.
 (pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
 
-<images/wl/test22_2_L.pdf, id=210, 361.35pt x 252.945pt>
-File: images/wl/test22_2_L.pdf Graphic file (type pdf)
+<images/wl/test22_2_w0.pdf, id=104, 361.35pt x 252.945pt>
+File: images/wl/test22_2_w0.pdf Graphic file (type pdf)
 
-<use images/wl/test22_2_L.pdf>
-Package pdftex.def Info: images/wl/test22_2_L.pdf used on input line 197.
+<use images/wl/test22_2_w0.pdf>
+Package pdftex.def Info: images/wl/test22_2_w0.pdf used on input line 125.
 (pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
 
-<images/wl/test22_2_amax.pdf, id=211, 361.35pt x 252.945pt>
+<images/wl/test22_2_amax.pdf, id=105, 361.35pt x 252.945pt>
 File: images/wl/test22_2_amax.pdf Graphic file (type pdf)
 
 <use images/wl/test22_2_amax.pdf>
-Package pdftex.def Info: images/wl/test22_2_amax.pdf used on input line 198.
+Package pdftex.def Info: images/wl/test22_2_amax.pdf used on input line 126.
 (pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
 
-<images/wl/test22_2_tmax.pdf, id=212, 361.35pt x 252.945pt>
+<images/wl/test22_2_tmax.pdf, id=106, 361.35pt x 252.945pt>
 File: images/wl/test22_2_tmax.pdf Graphic file (type pdf)
 
 <use images/wl/test22_2_tmax.pdf>
-Package pdftex.def Info: images/wl/test22_2_tmax.pdf used on input line 199.
+Package pdftex.def Info: images/wl/test22_2_tmax.pdf used on input line 127.
 (pdftex.def)             Requested size: 180.67456pt x 126.47218pt.
- (./seqsolve.bbl [7 <./images/sweep_test22_amax.pdf> <./images/sweep_test22_tma
-x.pdf> <./images/sweep_test22_w0.pdf> <./images/sweep_test22.pdf>])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 207.
- [8 <./images/sweep_test22_2_amax.pdf> <./images/sweep_test22_2_tmax.pdf> <./im
-ages/sweep_test22_2_w0.pdf> <./images/sweep_test22_2_R.pdf>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 207.
- [9 <./images/wl/test22_2_HIR.pdf> <./images/wl/test22_2_L.pdf> <./images/wl/te
-st22_2_amax.pdf> <./images/wl/test22_2_tmax.pdf>] (./seqsolve.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 207.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 207.
-Package rerunfilecheck Info: File `seqsolve.out' has not changed.
-(rerunfilecheck)             Checksum: 892D78CE11E0CAD60781EEEE1AC9B4B3;595.
+
+Underfull \hbox (badness 10000) in paragraph at lines 143--144
+[]\OT1/cmr/m/n/10 We first pro-vide prop-er-ties of not-nessecarily-
+ []
+
+[2] [3 <./images/test22_2_L_GR.pdf> <./images/wl/test22_2_HIR.pdf> <./images/wl
+/test22_2_w0.pdf> <./images/wl/test22_2_amax.pdf> <./images/wl/test22_2_tmax.pd
+f>] <images/seqs_1d/test22_33_L.pdf, id=355, 361.35pt x 252.945pt>
+File: images/seqs_1d/test22_33_L.pdf Graphic file (type pdf)
+
+<use images/seqs_1d/test22_33_L.pdf>
+Package pdftex.def Info: images/seqs_1d/test22_33_L.pdf used on input line 164.
+
+(pdftex.def)             Requested size: 144.53743pt x 101.17621pt.
+
+<images/seqs_1d/test22_33_Omk.pdf, id=356, 361.35pt x 252.945pt>
+File: images/seqs_1d/test22_33_Omk.pdf Graphic file (type pdf)
+
+<use images/seqs_1d/test22_33_Omk.pdf>
+Package pdftex.def Info: images/seqs_1d/test22_33_Omk.pdf used on input line 16
+5.
+(pdftex.def)             Requested size: 144.53743pt x 101.17621pt.
+
+<images/seqs_1d/test22_33_amax.pdf, id=357, 361.35pt x 252.945pt>
+File: images/seqs_1d/test22_33_amax.pdf Graphic file (type pdf)
+
+<use images/seqs_1d/test22_33_amax.pdf>
+Package pdftex.def Info: images/seqs_1d/test22_33_amax.pdf used on input line 1
+66.
+(pdftex.def)             Requested size: 144.53743pt x 101.17621pt.
+
+<images/seqs_1d/test22_33_tmax.pdf, id=358, 361.35pt x 252.945pt>
+File: images/seqs_1d/test22_33_tmax.pdf Graphic file (type pdf)
+
+<use images/seqs_1d/test22_33_tmax.pdf>
+Package pdftex.def Info: images/seqs_1d/test22_33_tmax.pdf used on input line 1
+67.
+(pdftex.def)             Requested size: 144.53743pt x 101.17621pt.
+ (./pap.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 177.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 177.
+ [4] [5 <./images/seqs_1d/test22_33_L.pdf> <./images/seqs_1d/test22_33_Omk.pdf>
+ <./images/seqs_1d/test22_33_amax.pdf> <./images/seqs_1d/test22_33_tmax.pdf>] (
+./pap.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 177.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 177.
+Package rerunfilecheck Info: File `pap.out' has not changed.
+(rerunfilecheck)             Checksum: 95126E01C89A565CBBA20F5E98588340;574.
  ) 
 Here is how much of TeX's memory you used:
- 7852 strings out of 493117
- 110569 string characters out of 6135432
- 212419 words of memory out of 5000000
- 11152 multiletter control sequences out of 15000+600000
- 13475 words of font info for 53 fonts, out of 8000000 for 9000
+ 7824 strings out of 493117
+ 109783 string characters out of 6135432
+ 218455 words of memory out of 5000000
+ 11139 multiletter control sequences out of 15000+600000
+ 13471 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 39i,13n,29p,1010b,485s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 36i,13n,31p,1011b,357s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
-</usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
-/usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></
-usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></u
-sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr
-/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/l
-ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/loc
-al/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/
-texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/tex
-live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texliv
-e/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2
-014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/20
-14/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2014/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2014/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/2014/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2014/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on seqsolve.pdf (9 pages, 1509210 bytes).
+</usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></
+usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></u
+sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
+r/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/
+local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/lo
+cal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/loca
+l/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/
+texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/te
+xlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texli
+ve/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/
+2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/201
+4/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2014/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2014/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2014/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2014/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2014/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2014/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2014/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2014/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2014/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2014/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmtt9.pfb>
+Output written on pap.pdf (5 pages, 559736 bytes).
 PDF statistics:
- 907 PDF objects out of 1000 (max. 8388607)
- 666 compressed objects within 7 object streams
- 64 named destinations out of 1000 (max. 500000)
- 164 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 569 PDF objects out of 1000 (max. 8388607)
+ 418 compressed objects within 5 object streams
+ 43 named destinations out of 1000 (max. 500000)
+ 118 words of extra memory for PDF output out of 10000 (max. 10000000)
 

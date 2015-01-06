@@ -9,7 +9,8 @@
 #include "evolve.h"
 
 // Function that actually does the evolution
-vector<double> BeginEvolution(Integrator&, IntParams&, double*, const double, const double, Output&, Consistency&, vector<double>&, vector<double>&, double, double,Parameters&);
+vector<double> BeginEvolution(Integrator&, IntParams&, double*, const double, const double, Output&, 
+								Consistency&, vector<double>&, vector<double>&, double, double,Parameters&,bool);
 
 // Function that the integrator calls to obtain derivatives
 static int intfunc(double, const double*, double*, void*);
@@ -119,14 +120,15 @@ vector<double> doEvolution(IniReader& inifile, Parameters& params, Output& outpu
     // Evolution //
     //***********//
 	
-	
+	bool evtoend = inifile.getiniBool("evtoend", true, "Seq");
 	double RT = inifile.getiniDouble("RicciThresh", 0.0, "Seq");
 	double sma = inifile.getiniDouble("smallesta", 0.0, "Seq");
 
     // Do the evolution!
 	// Vector to hold returned values
 	// entry 1 = "result", entry 2 = "histintRicci"
-	vector<double> returns = BeginEvolution(myIntegrator, myIntParams, data, starttime, endtime, output, *myChecker, hubble, redshift, RT, sma,params);
+	vector<double> returns = BeginEvolution(myIntegrator, myIntParams, data, starttime, endtime, output, 
+											*myChecker, hubble, redshift, RT, sma,params, evtoend);
 	
 	result = int(returns[0]);
 
@@ -261,7 +263,7 @@ vector<double> doEvolution(IniReader& inifile, Parameters& params, Output& outpu
 
 vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double data[],
         const double starttime, const double endtime, Output &output, Consistency &check,
-        vector<double>& hubble, vector<double>& redshift, double RicciThreshold, double smallesta, Parameters& modp) {
+        vector<double>& hubble, vector<double>& redshift, double RicciThreshold, double smallesta, Parameters& modp, bool evtoend) {
     // This routine takes in a number of parameters, and performs the cosmological background evolution
     // integrator is the class that handles integration steps
     // params is the class that stores the cosmological parameters
@@ -297,6 +299,8 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	double Seq_den = 0.0; // zero the denominator integrand
 	double amax = 0.0;
 	double wnow = 0.0;
+	double time_now = 0.0;
+	double a_now = 0.0;
 	// END :: JAP: sequestering variables
 
 	
@@ -318,6 +322,9 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 		akill = true;
     // This is the loop that takes successive integration steps. Halt if we go past the maximum evolution time.
 	int aflag = 0;	
+	
+	
+	 
 	
     while (time < endtime) {
 
@@ -346,6 +353,43 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
             //output.printvalue("FatalError", 1);
             returns[0] = 1; // integration error
         }
+		
+		if(!evtoend){
+			
+	        // If we've shot past a = 1, then interpolate back to a = 1.
+	        if (data[0] > 1.0) {
+	            // Calculate the time at which a = 0
+	            double olda = olddata[0];
+	            double newa = data[0];
+	            double time1 = oldtime + (time - oldtime) * (1 - olda) / (newa - olda);
+
+	            // Calculate the value of H
+	            double oldH = olddata[3];
+	            double newH = data[3];
+	            double H1 = oldH + (time1 - oldtime) / (time - oldtime) * (newH - oldH);
+
+	            // Calculate the value of phi
+	            double oldphi = olddata[1];
+	            double newphi = data[1];
+	            double phi1 = oldphi + (time1 - oldtime) / (time - oldtime) * (newphi - oldphi);
+
+	            // Calculate the value of phidot
+	            double oldphid = olddata[2];
+	            double newphid = data[2];
+	            double phid1 = oldphid + (time1 - oldtime) / (time - oldtime) * (newphid - oldphid);
+
+	            // Put it all back into the data
+	            time = time1;
+	            data[0] = 1.0;
+	            data[1] = phi1;
+	            data[2] = phid1;
+	            data[3] = H1;
+
+	        }
+			
+	        
+			
+		}
 		
         // Extract the state from the model
         params.getmodel().getstate(data, time, status, params.getparams());
@@ -396,57 +440,96 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
         }
 		*/
 		
-		if( a > amax)
-			amax = a;
+		// Do all of this if we are evolving to Armageddon
+		if(evtoend){
 		
-		// Refine step-size near crunch singularity
-        stepsize = integrator.getstepsize();
-        if (data[0] + 20.0 * data[3] * stepsize < 0 ) {
-            // Reduce the stepsize
-            // Calculate the exact amount that the stepsize will need to be in order to get to a = 0
-            // in the linear approximation
-            double temp =  - data[0] / 20.0 / data[3];
-            integrator.setstepsize( 0.00000000001 * temp );
-        }
+			if( a > amax)
+				amax = a;
 		
-		// Check to find out if we are "in the future"
-		if( a > 1 )
-			inFuture = true;
-		if(!inFuture)
-			wnow = status[15];
+			// Refine step-size near crunch singularity
+	        stepsize = integrator.getstepsize();
+	        if (data[0] + 20.0 * data[3] * stepsize < 0 ) {
+	            // Reduce the stepsize
+	            // Calculate the exact amount that the stepsize will need to be in order to get to a = 0
+	            // in the linear approximation
+	            double temp =  - data[0] / 20.0 / data[3];
+	            integrator.setstepsize( 0.00000000001 * temp );
+	        }
 		
-		// When nearing the crunch, start to refine the stepsize
-		if(data[0] < 0.08 && inFuture)
-			integrator.setstepsize( 0.0000000001 * integrator.getstepsize() );
+			// Check to find out if we are "in the future"
+			// As soon as a > 1, we passed the current size of the Universe,
+			// and so anything else will be "in the future".
+			// Can update quantities (like w_0 & age of Universe) from the past (since inFuture == FALSE),
+			// and then stop updating as soon as inFuture == TRUE
+			if( a > 1 )
+				inFuture = true;
+			if(!inFuture){
+				wnow = status[15];
+				time_now = time;
+				a_now = a;
+			}
 		
-		if(data[0] < 0.01 && inFuture)
-			integrator.setstepsize( 0.0000000000001 * integrator.getstepsize() );
+			// When nearing the crunch, start to refine the stepsize
+			if(data[0] < 0.08 && inFuture)
+				integrator.setstepsize( 0.0000000001 * integrator.getstepsize() );
+		
+			if(data[0] < 0.01 && inFuture)
+				integrator.setstepsize( 0.0000000000001 * integrator.getstepsize() );
 				
 		
-		// Compute the numerator-term of the constraint for sequestering
-		Seq_num += RicciScalar * Seq_vol;
+			// Compute the numerator-term of the constraint for sequestering
+			Seq_num += RicciScalar * Seq_vol;
 		
-		// Compute the denominator-term of the constraint for sequestering
-		Seq_den += Seq_vol;
+			// Compute the denominator-term of the constraint for sequestering
+			Seq_den += Seq_vol;
 			
-		// Reasons to stop...
+			// Reasons to stop...
 
-		if( a < smallesta && inFuture && akill ){
-			aflag = 1;
-			break;
-		}
+			if( a < smallesta && inFuture && akill ){
+				aflag = 1;
+				break;
+			}
 				
-		// If we are about to drop below a < 0, kill it (else serious issue ensue...)
-		//if( data[0] + 0.01 * data[3] * stepsize < 0 )
-		//	break;
+			// If we are about to drop below a < 0, kill it (else serious issue ensue...)
+			//if( data[0] + 0.01 * data[3] * stepsize < 0 )
+			//	break;
 		
 		
-		// \JAP
+			// \JAP
 				
-		if(  (RicciScalar > 1E10 || RicciScalar < -1E10) && inFuture ){
-			break;
+			if(  (RicciScalar > 1E10 || RicciScalar < -1E10) && inFuture ){
+				break;
+			}
+			
 		}
+		else{
+	        // Get out if we're done
+	        if (data[0] >= 1.0)
+	            break;
 		
+		 
+		
+	        // If we're nearing a = 1, be careful about overshooting
+	        // Estimated step size in a is H * stepsize
+	        stepsize = integrator.getstepsize();
+	        if (data[0] + 2.0 * data[3] * stepsize > 1.0) {
+	            // Reduce the stepsize
+	            // Calculate the exact amount that the stepsize will need to be in order to get to a = 1
+	            // in the linear approximation
+	            double temp = (1.0 - data[0]) / 2.0 / data[3];
+	            integrator.setstepsize(0.9 * temp);
+	            // Eventually we'll run into the minimum step size and we'll cross the finishline
+	            // Also note that Hdot is usually negative, so it will typically take a little bit more than temp
+	            // to cross the finish line.
+	            // This tends to take about 20 steps to hit a = 1, which should be good enough to have
+	            // derivatives near a = 1 under control.
+	        }
+		}
+			
+		
+		
+		
+		 
     }
 		
 	// Construct value of the historic integral of the Ricci Scalar, 
@@ -455,6 +538,9 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 
     // Take a look at the consistency of the final state
     check.checkfinal(data, time, params, output, status);
+
+
+
 
     // Return success!
 	if (returns[0] == 0)
@@ -466,6 +552,8 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	returns[4] = amax;	// a_max
 	returns[5] = wnow;
 	returns[6] = time;
+	returns[7] = time / time_now;
+	returns[8] = a_now;
 	return returns;
 	
 }

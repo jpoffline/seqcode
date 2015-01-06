@@ -9,8 +9,9 @@
 # We want to modify the sigmas such that we obtain an acceptance rate of about 0.234
 #Cosmology Omegamh2 0.01 0.2 0.001
 #Cosmology Omegabh2 0.005 0.1 0.0005
-#Cosmology Omegakh2 -0.02 0.02 0.0005
+#Cosmology Omegakh2 -0.004 0.02 0.0005
+Cosmology Omegakh2 -0.004 -0.001 0.0005
 #Cosmology desiredh 0.5 1.0 0.001
 Cosmology phi0 0.1 5.0 0.005
 Cosmology phidot0 0.1 2.0 0.005
-Quintessence mass 0.1 2.0 0.005
+Quintessence mass 0.5 1.0 0.005

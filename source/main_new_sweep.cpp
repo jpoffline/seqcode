@@ -128,29 +128,9 @@ int main(int argc, char* argv[]) {
 	double histIntRicciScalar;
 
 	vector<double> results;
-	
+	/*
 	ofstream dumpconv;
 	dumpconv.open( inifile.getiniString("dumpdir", "testconv", "Seq") + "/" + inifile.getiniString("dumpfilename", "test.dat", "Seq") );
-	/*
-	while(true){
-		
-		inifile.setparam(paramname,paramsection,param);
-	        results = doEvolution(inifile, myParams, myOutput, SN1adata, dopostprocess);
-		result = int(results[0]);
-		histIntRicciScalar = results[1];
-		
-		if( Steps > maxSteps ){
-			NRflag = 1;
-			break;
-		}
-		
-		dumpconv << param << " " << results[1] << " " << results[2] << std::endl;
-		param = param + DeltaParam;
-		Steps++;
-		
-	}
-	*/
-	
 	string p1_name = "mass";
 	string p1_section = "Quintessence";
 	string p2_name = "Omegakh2";
@@ -161,106 +141,115 @@ int main(int argc, char* argv[]) {
 	double p2_min = inifile.getiniDouble("p2_min", 0.0, "Seq");
 	double p2_max = inifile.getiniDouble("p2_max", 0.0, "Seq");
 	double delta_p2 = (p2_max - p2_min)/inifile.getiniDouble("p2_n", 10.0, "Seq");		 
-		
 	std::cout << p1_name << " = " << p1_min << " " << p1_max << " " << delta_p1 << "(logspace)" << std::endl;
-	
 	std::cout << p2_name << " = " << p2_min << " " << p2_max << " " << delta_p2 << std::endl;
 	
 	for(double p1 = p1_min; p1 < p1_max; p1 += delta_p1){
-		
 		inifile.setparam(p1_name,p1_section,pow(10.0,p1));
-		
 		for(double p2 = p2_min; p2 < p2_max; p2 += delta_p2){
-
+			inifile.setparam("evtoend","Seq",true);
 			inifile.setparam(p2_name,p2_section,p2);
-			
 			Parameters myParams_1(inifile);
-			
 			results = doEvolution(inifile, myParams_1, myOutput, SN1adata, dopostprocess);
-			
+			// Now do a run to get the likelihood
+			inifile.setparam("evtoend","Seq",false);
+			Parameters myParams_2(inifile);
+			doEvolution(inifile, myParams_2, myOutput, SN1adata, true);
 			dumpconv << p1 << " " << p2 << " ";
-			
 			for(int n = 0; n < results.size(); n++)
 				dumpconv << results[n] << " ";
+			dumpconv << myOutput.getvalue("combinationchi", 0.0);
 			dumpconv << std::endl;
-			
 		}
-
 		dumpconv << std::endl;
-		
 	}
+	*/
+	
+	
+	// HOPEFULLY, A ROUTINE TO FIND A SEQUESTERING SOLUTION VIA SOME MCMC-ISH METHOD.
+	
+	
+	
+	ofstream dumpconv;
+	dumpconv.open( inifile.getiniString("dumpdir", "testconv", "Seq") + "/" + inifile.getiniString("dumpfilename", "test.dat", "Seq") );
+	
+	double HIRl_p, HIRl_c = 1000, Omk_p, tmax, w0, amax;
+	double HIRl_t = inifile.getiniDouble("HIRt", 0.1, "Seq");
+
+	double p1_min = inifile.getiniDouble("p1_min", 0.0, "Seq");
+	double p1_max = inifile.getiniDouble("p1_max", 0.0, "Seq");
+	string p1_name = "mass";
+	string p1_section = "Quintessence";
+	double delta_p1 = (p1_max - p1_min)/inifile.getiniDouble("p1_n", 10.0, "Seq");
+	double p2_min = inifile.getiniDouble("p2_min", 0.0, "Seq");
+	double p2_max = inifile.getiniDouble("p2_max", 0.0, "Seq");
+	double p2_sigma = (p2_max - p2_min) / 100.0;
+	double Omk = p2_min;
+	double tarmfrac, a_now;
+	for(double p1 = p1_min; p1 < p1_max; p1 += delta_p1){
+		
+		inifile.setparam(p1_name,p1_section,pow(10.0,p1));
+		Omk = p2_min + (p2_max - p2_min) * 0.5 + NormalRand() * p2_sigma;
+		HIRl_c = 1000;
+		while(true){
+			
+			// Pick a new Omk that is inside the prior range
+			while(true){
+				Omk_p = Omk + NormalRand() * p2_sigma;
+				if(Omk_p <= p2_max && Omk_p >= p1_min)
+					break;
+			}
+			
+			// Now that we have a sensible choice of Omk,
+			// run the evolver...
+			inifile.setparam("evtoend","Seq",true);
+			inifile.setparam("Omegakh2","Cosmology",Omk_p);
+			Parameters myParams_1(inifile);
+			results = doEvolution(inifile, myParams_1, myOutput, SN1adata, false);
+			// ... and pull out the value of <R>
+			HIRl_p = log10(abs(results[1]));
+			
+			// If <R> for this choice of Omk is smaller than the previous one,
+			// then keep it.
+			if(HIRl_p < HIRl_c){
+				Omk = Omk_p;
+				HIRl_c = HIRl_p;
+			}
+	
+			// If <R> is smaller than te desired threshold "error",
+			//	then we have found a sequestering solution.	
+			if(HIRl_c < HIRl_t){
+				amax = results[4];
+				w0 = results[5];
+				tmax = results[6];
+				tarmfrac = results[7];
+				a_now = results[8];
+				break;
+			}
+		}
+		inifile.setparam("evtoend","Seq",false);
+		Parameters myParams_2(inifile);
+		doEvolution(inifile, myParams_2, myOutput, SN1adata, true);
+		dumpconv << p1 << " " <<  Omk << " " << HIRl_c << " ";
+		dumpconv << exp(-0.5 * myOutput.getvalue("combinationchi", 0.0) ) << " ";
+		dumpconv << amax << " " << tmax << " " << w0 << " " << tarmfrac << " " << a_now << endl;
+		/*
+		1: mass
+		2: Omk
+		3: <R>
+		4: L
+		5: amax
+		6: tmax
+		7: w0
+		
+		*/
+	}
+	
+	
 	
 	dumpconv.close();
 	if(NRflag == 0)
-		std::cout << "histIntRicciScalar = " << histIntRicciScalar << endl;
-	
-	
-	
-	/*
-	ofstream dumps;
-	dumps.open("tester.dat");
-	double Omk2_current=inifile.getiniDouble("Omegakh2", 0.0, "Cosmology");
-	int step=0,steps=100;
-	double deriv_estimate;
-	double Omk2_stepSize=0.00025;
-	double HIR_current,HIR_proposed,dum;
-	vector<double> results_current, results_2,results_3;
-	
-	while(true){
-		
-		std::cout << step << " ";
-		
-		inifile.setparam("Omegakh2","Cosmology",Omk2_current);
-		Parameters myParams_1(inifile);
-		results_current = doEvolution(inifile, myParams_1, myOutput, SN1adata, dopostprocess);
-		
-		inifile.setparam("Omegakh2","Cosmology",Omk2_current+Omk2_stepSize);
-		Parameters myParams_2(inifile);
-		results_2 = doEvolution(inifile, myParams_2, myOutput, SN1adata, dopostprocess);
-		
-		inifile.setparam("Omegakh2","Cosmology",Omk2_current-Omk2_stepSize);
-		Parameters myParams_3(inifile);
-		results_3 = doEvolution(inifile, myParams_3, myOutput, SN1adata, dopostprocess);
-		
-		HIR_current = results_current[1];
-		deriv_estimate=(results_2[1]-results_3[1])/2.0/Omk2_stepSize;
-		
-   	   	dum=Omk2_current;
-		
-		//if(abs(dum-Omk2_current)/Omk2_stepSize>100*Omk2_stepSize)
-		//	Omk2_stepSize=Omk2_stepSize*0.5;		
-		
-		std::cout << "Omk2_current = " << Omk2_current << ",  ";
-		std::cout << "HIR_current = " << HIR_current << " ";
-		std::cout << "deriv_estimate = " << deriv_estimate << " ";
-		std::cout << std::endl;
-		dumps << Omk2_current << " " << HIR_current << " " << results_current[2] << " " << results_current[3] << " " << results_current[4] << " ";
-		dumps << deriv_estimate << " " << std::endl;
-		
-		if(abs(HIR_current)<1)
-			Omk2_stepSize=Omk2_stepSize*0.9;
-		
-		if(abs(HIR_current)<0.1){
-			std::cout << "<R> below threshold" << std::endl;
-			break;
-		}
-		if(step>steps){
-			std::cout << "Run out of steps" << std::endl;
-			break;
-		}
-		
-		// Update
-		Omk2_current=Omk2_current-HIR_current/deriv_estimate;
-		step++;
-		
-	}
-	
-	std::cout << "Omk2_current = " << Omk2_current << ", ";
-	std::cout << "<R> = " << HIR_current << ", a_final = " << results_current[3] << ", R_final = " << results_current[2] << ", ";
-	std::cout << "a_max = " << results_current[4] << std::endl;
-	
-	dumps.close();
-	*/
+		std::cout << "histIntRicciScalar = " << histIntRicciScalar << endl;	
 	
     // Stop timing
     myTimer.stop();

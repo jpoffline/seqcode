@@ -1,0 +1,53 @@
+function like_1d
+
+    close all;
+    
+    dataDIR = '../testcut/';
+    dataIDS = 'test22_33';
+    dataSUF = '.dat';
+    dataFIL = strcat(dataDIR,dataIDS,dataSUF);
+    
+    data = load(dataFIL);
+    
+    m = 10.^(data(:,1));
+    Omk = data(:,2);
+    L = data(:,4);
+    amax = data(:,5);
+    tmax = data(:,6);
+    L = L / max(L);
+    
+    m_max = max(m);
+    m_min = min(m);
+    
+    npx = 2;
+    npy = npx;
+    np = 1;
+    
+    subplot(npx,npy,np); np = np+1;
+    plot(m, L);
+    xlabel('m^3');
+    ylabel('Likelihood');
+    xlim([m_min m_max]);
+    
+    subplot(npx,npy,np); np = np+1;
+    plot(m, amax);
+    xlabel('m^3');
+    ylabel('a_{max}');
+    xlim([m_min m_max]);
+    
+    subplot(npx,npy,np); np = np+1;
+    for ii=1:length(m)-1
+        plot(m(ii),tmax(ii),'k');
+        hold on;
+    end;
+    %plot(m, tmax);
+    xlabel('m^3');
+    ylabel('t_{max}');
+    xlim([m_min m_max]);
+    
+    subplot(npx,npy,np); np = np+1;
+    plot(m, Omk);
+    xlabel('m^3');
+    ylabel('\Omega_kh^2');
+    xlim([m_min m_max]);
+    
