@@ -21,7 +21,7 @@
 
 using namespace std;
 
-double ComputeLikelihood(IniReader& inifile, Print2Memory& output, string *names, string *sections, double *parameters, int numparams, bool usingSN1a, vector<vector<double> > &SN1adata, double &HIR);
+double ComputeLikelihood(IniReader& inifile, Print2Memory& output, string *names, string *sections, double *parameters, int numparams, bool usingSN1a, vector<vector<double> > &SN1adata);
 void GetProposedParameters(double *priors, double *current, double *proposed, bool *logs, int numparams);
 
 // Our program entry point
@@ -195,8 +195,15 @@ int main(int argc, char* argv[]) {
         cout << "Warning: cannot find Union2.1 SN1a data file." << endl;
     }
 
-	double HIR_current,HIR_prop;
-
+	double Omk, Omk_p;
+	double Omk_min = inifile.getiniDouble("p2_min", 0.0, "Seq");
+	double Omk_max = inifile.getiniDouble("p2_max", 0.0, "Seq");
+	double Omk_sigma = (Omk_max - Omk_min) / 100.0;
+	double HIRl_c, HIR_p, amax, w0, tmax, tarmfrac;
+	double HIRl_t = inifile.getiniDouble("HIRt", 0.1, "Seq");
+	int seq_find_step, seq_find_steps = 200;
+	bool seqfound;
+	vector<double> results;
 	//******************//
     // Begin the chains //
     //******************//
@@ -262,12 +269,21 @@ int main(int argc, char* argv[]) {
                 current[param] = lower + UnitRand() * (upper - lower);
             }
             // Calculate the likelihood of the initial guess
-            L_current = ComputeLikelihood(inifile, myOutput, names, sections, current, numparams, usingSN1a, SN1adata, HIR_current);
+            L_current = ComputeLikelihood(inifile, myOutput, names, sections, current, numparams, usingSN1a, SN1adata);
         }
 
-
+		 
         // Reset progress counter
         barcount = 0;
+
+
+		// Start off with a randomly chosen Omk
+		// This will be refined to find the sequestering solution
+		while(true){
+			Omk = Omk_min + UnitRand() * (Omk_max - Omk_min);
+			if(Omk >= Omk_min || Omk <= Omk_max)
+					break;
+		}
 
 		// Start the sampling
 		while(true){
@@ -275,22 +291,95 @@ int main(int argc, char* argv[]) {
             // Increment our step counter
             MCMCstep++;
 
-			// Get some proposed parameters
-			GetProposedParameters(priors, current, proposed, logs, numparams);
+			/////////////////////////////////////////////////////////
+			//// BEGIN ALGORITHM TO FIND SEQUESTERING SOLUTION
+			//
+			// Get some proposed parameters: need to dial Omk until sequestering solution is found
+			// for rest of the values of the parameters.
+			/////////////////////////////////////////////////////////
+			seqfound = false;
+			while(true){
+				seq_find_step = 0;
+				// (1) Get a set of parameters 
+				GetProposedParameters(priors, current, proposed, logs, numparams);
+				// (1.1) Set values of the parameters
+				for(int n = 0; n < numparams; n++)	
+					inifile.setparam(names[n], sections[n], proposed[n]);
+			
+				// (2) Dial Omega_k h^2 until a sequestering solution is found
+				// (2.0.0) The starting value of Omk is inherited... this just makes finding
+				//         a sequestering solution "easier".
+				// (2.0.1) Start off the current value of <R> as something "quite large" 
+				//		   ... the code will find something better than this
+				HIRl_c = 1000;
+				// (2.0.2) Set the evolver to run to Armageddon
+				inifile.setparam("evtoend","Seq",true);
+				while(true){
+		
+					// (2.1.1) Pick a new Omk that is inside the prior range
+					while(true){
+						Omk_p = Omk + NormalRand() * Omk_sigma;
+						if(Omk_p <= Omk_max && Omk_p >= Omk_min)
+							break;
+					}
+		
+					// (2.1.2) Now that we have a sensible choice of Omk, run the evolver...
+					// (2.1.2.1) Set the Omegakh2 value in inifile to be the choice found above
+					inifile.setparam("Omegakh2","Cosmology",Omk_p);
+					// (2.1.2.2) Create a myParams_1 to be fed into the doEvolution routine
+					Parameters myParams_1(inifile);
+					// (2.1.2.3) Do the evolution
+					results = doEvolution(inifile, myParams_1, myOutput, SN1adata, false);
+					// ... and pull out the value of log10(|<R>|)
+					HIR_p = log10(abs(results[1]));
+		
+					// (2.1.3) If <R> for this choice of Omk is smaller than the previous one, then keep it.
+					if(HIR_p < HIRl_c){
+						Omk = Omk_p;
+						HIRl_c = HIR_p;
+					}
+
+					// (2.1.4) If <R> is smaller than the desired threshold "error", then we have found a sequestering solution.	
+					if(HIRl_c < HIRl_t){
+						// Remember some useful information about this run
+						amax = results[4];
+						w0 = results[5];
+						tmax = results[6];
+						tarmfrac = results[7];
+						seqfound = true;
+						break;
+					}
+					// If its taking too long to find a sequestering solution,
+					// with this given set of parameters, then stop, and get a new set.
+					if(seq_find_step > seq_find_steps && !seqfound)
+						break;
+					else
+						seq_find_step++;
+				}
+				// If we've found a sequestering solution, then break out of this "find sequestering"
+				// loop, and continue to compute the likelihood.
+				if(seqfound)
+					break;
+				
+			}
+			
+			// Make sure we only run the evolver to a = 1 (the current time)
+			inifile.setparam("evtoend","Seq",false);
+			/////////////////////////////////////////////////////////
+			//// END ALGORITHM TO FIND SEQUESTERING SOLUTION
+			/////////////////////////////////////////////////////////
+						
 			// Get the value of the likelihood with these proposed parameters		
-			L_proposed = ComputeLikelihood(inifile, myOutput, names, sections, proposed, numparams, usingSN1a, SN1adata, HIR_prop);
+			L_proposed = ComputeLikelihood(inifile, myOutput, names, sections, proposed, numparams, usingSN1a, SN1adata);
 			// Compute likelihood ratio	
 			LikelihoodRatio = L_proposed / L_current;
 			// Decide whether to accept the proposed parameters.
-//			if( ( (L_proposed >= L_current) && ((abs(HIR_prop)) < (abs(HIR_current))) ) || UnitRand() < LikelihoodRatio ){
-//			if( ( (L_proposed >= L_current) && (abs(HIR_prop)) < (abs(HIR_current)))  || UnitRand() < (abs(HIR_current))/(abs(HIR_prop))){
-			if( HIR_prop <= HIR_current  || UnitRand() < 0.01 ){
+			if( L_proposed >= L_current || UnitRand() < LikelihoodRatio ){
 				// Increment acceptance counter
 				MCMCaccept_counter++;
 				// Store proposed parameters
 				memcpy(current, proposed, numparams*sizeof(double));
 				L_current = L_proposed;
-				HIR_current = HIR_prop;
 			}
 		
 			// Dump to file after burn-in
@@ -302,7 +391,8 @@ int main(int argc, char* argv[]) {
                         MCMCchainfile << log10(current[n]) << "\t";
                     }
                 }
-                MCMCchainfile << L_current << "\t" << HIR_current << "\t" <<  HIR_prop << endl;
+                MCMCchainfile << L_current;
+				MCMCchainfile << "\t" << Omk << "\t" << amax << "\t" <<  tmax << "\t" << tarmfrac << "\t" << HIRl_c << endl;
 			}
 			else{
 			    // Only start the acceptance counter after the burn-in period has ended
@@ -361,7 +451,7 @@ int main(int argc, char* argv[]) {
 }
 
 // Computes the likelihood of given parameters
-double ComputeLikelihood(IniReader& inifile, Print2Memory& output, string *names, string *sections, double *parameters, int numparams, bool usingSN1a, vector<vector<double> > &SN1adata, double& HIR){
+double ComputeLikelihood(IniReader& inifile, Print2Memory& output, string *names, string *sections, double *parameters, int numparams, bool usingSN1a, vector<vector<double> > &SN1adata){
 	
     // Make a clean slate for collecting data
     output.printfinish(0.0);
@@ -377,14 +467,8 @@ double ComputeLikelihood(IniReader& inifile, Print2Memory& output, string *names
 	// Do the evolution, and return the likelihood for the data combination
 	// defined by "combinationchi"
     double result;
+	
 	vector<double> results = doEvolution(inifile, myParams, output, SN1adata, true);
-
-	// Now evolve to Armageddon
-	inifile.setparam("evtoend","Seq",true);
-	Parameters myParams2(inifile);
-	vector<double> results2 = doEvolution(inifile, myParams2, output, SN1adata, false);
-	// Extract <R>
-	HIR = abs( results2[1] );
 	
 	// Now check if original run (which was to a = 1, today) is sensible
     if (results[0] == 0)
