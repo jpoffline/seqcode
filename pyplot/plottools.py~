@@ -7,7 +7,7 @@ from scipy import stats
 # Function to read in data (possibly with comments, marked on with '#'
 # then return the required columns
 
-line_BURNS = 9000
+line_BURNS = 1000
 
 def data_column(df, (p1, p2), fac):
     d = open(df,'r');
