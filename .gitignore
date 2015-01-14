@@ -3,3 +3,4 @@
 debug/*.o
 logs/*.log
 log*/*
+*.pdf
