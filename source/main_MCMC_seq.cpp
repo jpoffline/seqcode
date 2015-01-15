@@ -203,6 +203,13 @@ int main(int argc, char* argv[]) {
 	double HIRl_t = inifile.getiniDouble("HIRt", 0.1, "Seq");
 	int seq_find_step, seq_find_steps = 200;
 	bool seqfound;
+	bool findsequester = inifile.getiniBool("findsequester", false, "MCMC");
+	
+	if(findsequester)
+		std::cout << "MCMC with the sequestering solution" << std::endl;
+	else
+		std::cout << "MCMC without sequestering constraint" << std::endl;
+	
 	vector<double> results;
 	//******************//
     // Begin the chains //
@@ -279,7 +286,7 @@ int main(int argc, char* argv[]) {
 
 		// Start off with a randomly chosen Omk
 		// This will be refined to find the sequestering solution
-		while(true){
+		while(true && findsequester){
 			Omk = Omk_min + UnitRand() * (Omk_max - Omk_min);
 			if(Omk >= Omk_min || Omk <= Omk_max)
 					break;
@@ -315,17 +322,19 @@ int main(int argc, char* argv[]) {
 				// (2.0.2) Set the evolver to run to Armageddon
 				inifile.setparam("evtoend","Seq",true);
 				while(true){
+					// We only dial Omk to find sequestering solutions
+					if(findsequester){
+						// (2.1.1) Pick a new Omk that is inside the prior range
+						while(true){
+							Omk_p = Omk + NormalRand() * Omk_sigma;
+							if(Omk_p <= Omk_max && Omk_p >= Omk_min)
+								break;
+						}
 		
-					// (2.1.1) Pick a new Omk that is inside the prior range
-					while(true){
-						Omk_p = Omk + NormalRand() * Omk_sigma;
-						if(Omk_p <= Omk_max && Omk_p >= Omk_min)
-							break;
+						// (2.1.2) Now that we have a sensible choice of Omk, run the evolver...
+						// (2.1.2.1) Set the Omegakh2 value in inifile to be the choice found above
+						inifile.setparam("Omegakh2","Cosmology",Omk_p);
 					}
-		
-					// (2.1.2) Now that we have a sensible choice of Omk, run the evolver...
-					// (2.1.2.1) Set the Omegakh2 value in inifile to be the choice found above
-					inifile.setparam("Omegakh2","Cosmology",Omk_p);
 					// (2.1.2.2) Create a myParams_1 to be fed into the doEvolution routine
 					Parameters myParams_1(inifile);
 					// (2.1.2.3) Do the evolution
@@ -340,7 +349,7 @@ int main(int argc, char* argv[]) {
 					}
 
 					// (2.1.4) If <R> is smaller than the desired threshold "error", then we have found a sequestering solution.	
-					if(HIRl_c < HIRl_t){
+					if(HIRl_c < HIRl_t || !findsequester){
 						// Remember some useful information about this run
 						amax = results[4];
 						w0 = results[5];
