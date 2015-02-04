@@ -57,9 +57,11 @@ def mcmc_labels(ins, priorsfilename):
         if ll == 'Omegabh2':
             lab[i] = '$\Omega_b h^2$'     
             dloc.append( findloc(ll, legit_labels) ) 
-        if ll == 'Omegamh2':
-            lab[i] = '$\Omega_m h^2$'     
+    	if ll == 'Omegakh2': 
+            lab[i] = '$10^{-3}\Omega_k h^2$'
             dloc.append( findloc(ll, legit_labels) ) 
+            fac[i] = 1000.0
+            
 
     	if ll == 'like':
     		lab[i] = 'L'
@@ -80,5 +82,5 @@ def mcmc_labels(ins, priorsfilename):
     	if ll == 'HIR': 
     		lab[i] = '$< R>$'
     		dloc.append( n_legit_labels + 5 )
-            
+                
     return (dloc, lab, fac)    

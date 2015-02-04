@@ -324,7 +324,8 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	int aflag = 0;	
 	
 	
-	 
+	double mycount = 0.0; 
+	double time_physical = 0.0;
 	
     while (time < endtime) {
 
@@ -345,14 +346,18 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
         olddata[3] = data[3];
 
         // Take a step
+//		std::cout << "pre-t = " << time;
         result = integrator.dointstep(intfunc, params, data, time, endtime);
-
+//		std::cout << ", post-t = " << time << " " << tmy + (time - oldtime ) / data[0] << std::endl;
         // If the step failed, return an integration error
         if (result != GSL_SUCCESS) {
            // output.printlog("Integration routine failed.");
             //output.printvalue("FatalError", 1);
             returns[0] = 1; // integration error
         }
+		
+		time_physical = time_physical + ( data[0] - olddata[0] ) / data[0] / data[3];
+		
 		
 		if(!evtoend){
 			
@@ -386,8 +391,6 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	            data[3] = H1;
 
 	        }
-			
-	        
 			
 		}
 		
@@ -465,7 +468,7 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 				inFuture = true;
 			if(!inFuture){
 				wnow = status[15];
-				time_now = time;
+				time_now = time_physical;
 				a_now = a;
 			}
 		
@@ -526,7 +529,7 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	        }
 		}
 			
-		
+		mycount ++;
 		
 		
 		 
@@ -541,7 +544,6 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 
 
 
-
     // Return success!
 	if (returns[0] == 0)
 		returns[0] = 0;
@@ -551,8 +553,8 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	returns[3] = data[0]; // a_end
 	returns[4] = amax;	// a_max
 	returns[5] = wnow;
-	returns[6] = time;
-	returns[7] = time / time_now;
+	returns[6] = time_physical;
+	returns[7] = time_physical / time_now;
 	returns[8] = a_now;
 	return returns;
 	

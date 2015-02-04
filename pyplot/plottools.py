@@ -55,6 +55,7 @@ def plot( (X,Y), label, output_fig_name, fig_fontsize):
     plt.ylabel(label[1], fontsize = fig_fontsize)
     pp.savefig()
     pp.close()
+    plt.close()
 
 def plot_1dhist(data, nbins, axes_labels,out_fig_filename, fig_fontsize):
     pp = PdfPages(out_fig_filename)
@@ -65,6 +66,7 @@ def plot_1dhist(data, nbins, axes_labels,out_fig_filename, fig_fontsize):
     plt.ylabel('', fontsize = fig_fontsize)
     pp.savefig()
     pp.close()  
+    plt.close()
     
 def plot_2dhist(data_plottable, lab, nbins, fig_fontsize, output_fig_name):
     pp = PdfPages(output_fig_name)
@@ -76,3 +78,4 @@ def plot_2dhist(data_plottable, lab, nbins, fig_fontsize, output_fig_name):
     plt.colorbar()
     pp.savefig()
     pp.close() 
+    plt.close()

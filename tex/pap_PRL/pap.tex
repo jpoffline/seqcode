@@ -12,20 +12,37 @@
  
 
 \title{Predicting Armageddon for the sequestered Universe}
+
+\author{Nemanja Kaloper}
+\email{kaloper@physics.ucdavis.edu}
+\affiliation{Department of Physics, University of California, Davis, CA 95616, USA}
+
+\author{Antonio Padilla}
+\email{antonio.padilla@nottingham.ac.uk,}
+\affiliation{School of Physics \& Astronomy, University of Nottingham, Nottingham, NG7 2RD, U.K.}
+
 \author{Jonathan A. Pearson}
 \email{j.pearson@nottingham.ac.uk}
 \affiliation{School of Physics \& Astronomy, University of Nottingham, Nottingham, NG7 2RD, U.K.}
+
+\author{Adam Moss}
+\email{adam.moss@nottingham.ac.uk}
+\affiliation{School of Physics \& Astronomy, University of Nottingham, Nottingham, NG7 2RD, U.K.}
+
+
+\author{Jolyon Bloomfield}
+\email{jolyon@mit.edu}
+\affiliation{MIT Kavli Institute for Astrophysics and Space Research, Massachusetts Institute of Technology, Cambridge, MA 02139, USA}
 
 \date{\today}
 
 
 \begin{abstract} 
-In conversation with Adam Moss, Tony Padilla, Nemanja Kaloper, Jolyon Bloomfield.
-
+The Universe will die in $X$-billion years and $d$-days from now. One consolation is that we will have lived long enough to see Andromeda smash into us; that is, if we survive sol's passing into the Red Giant phase. Small detail, but this is if the sequestering solution to the cosmological constant problem is true.
 \end{abstract}
 
 \maketitle
-\tableofcontents
+%\tableofcontents
 \section{Introduction}
 The recently proposed \textit{vacuum sequestering} solution to the cosmological constant problem \cite{Kaloper:2013zca, Kaloper:2014dqa, Kaloper:2014fca} needs confronting to data in order to have its free parameters constrained. A consequence of this is that we will obtain predictions for the date of  Universal Armageddon, as well as a prediction for the maximum size of the Universe.
 
@@ -159,15 +176,20 @@ In \fref{likelihood_sequestering_sweep}(b) we provide the value of spatial curva
 
 \subsection{Observational constraints}
 \comment{DO MCMC ANALYSIS}
- \begin{figure*}[!t]
+The parameters marginalised over are
+\bea
+\rbm{p} = \bigg\{\qsubrm{\Omega}{m}h^2,\qsubrm{\Omega}{b}h^2, \dot{\phi}_0,m^3 \bigg\}
+\eea
+
+ \begin{figure}[!t]
       \begin{center}
-      	\subfigure[\, Likelihood ]{\includegraphics[scale=0.4]{images/seqs_1d/test22_33_L}} \qquad
-	\subfigure[\, Derived spatial curvature ]{\includegraphics[scale=0.4]{images/seqs_1d/test22_33_Omk}}\\
-	\subfigure[\, $\qsubrm{a}{max}$ ]{\includegraphics[scale=0.4]{images/seqs_1d/test22_33_amax}} \qquad
-	\subfigure[\, $\qsubrm{t}{max}$ ]{\includegraphics[scale=0.4]{images/seqs_1d/test22_33_tmax}} 
+      	\subfigure[\, Likelihood ]{\includegraphics[scale=0.3]{images/seqs_1d/test22_33_L}} \qquad
+	\subfigure[\, Derived spatial curvature ]{\includegraphics[scale=0.3]{images/seqs_1d/test22_33_Omk}}\\
+	\subfigure[\, $\qsubrm{a}{max}$ ]{\includegraphics[scale=0.3]{images/seqs_1d/test22_33_amax}} \qquad
+	\subfigure[\, $\qsubrm{t}{max}$ ]{\includegraphics[scale=0.3]{images/seqs_1d/test22_33_tmax}} 
       \end{center}
 \caption{Using data to predict properties of sequestered universes. Here we dial the spatial curvature until a sequestered solution is found for a given set of initial data. In (a) we plot the likelihood from SN1a+BAO+WMAP data, and in (b) the spatial curvature required to yield sequestering solutions. In (c) we plot the maximum size of the Universe, and the colours denote the observational likelihood on the sequestering solutions (blue is $L > 0.6$ and red $L > 0.9$). Similarly, (d) is the age of the Universe at Armageddon, on sequestering solutions. }\label{likelihood_sequestering_sweep}
-\end{figure*}
+\end{figure}
 
 \section{Discussion} 
 
