@@ -199,7 +199,7 @@ int main(int argc, char* argv[]) {
 				if(Omk_p <= p2_max && Omk_p >= p1_min)
 					break;
 			}
-			
+
 			// Now that we have a sensible choice of Omk,
 			// run the evolver...
 			inifile.setparam("evtoend","Seq",true);

@@ -2,9 +2,9 @@ import plottools as pts
 import labels
 import pylab as P
 from pylab import *
+import backend
 
-
-fig_fontsize = 13
+fig_fontsize = backend.fig_fontsize
 toplot = []
 ID = 'run'
 if len(sys.argv) > 1:
@@ -14,7 +14,7 @@ else:
     toplot.append('Omk')
     
 data_DIR = '../chains/' + ID + '/'
-priors_filename = data_DIR + 'priors.txt'
+priors_filename = data_DIR + backend.priors_file_name
 data_filename = data_DIR + 'chain0001.dat'
 PLOTSDIR = 'plots/';    
 

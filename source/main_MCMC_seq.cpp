@@ -348,14 +348,28 @@ int main(int argc, char* argv[]) {
 						HIRl_c = HIR_p;
 					}
 
+
+					/*
+						returns[1] = histintRicci; // <R>
+						returns[2] = RicciScalar; // R_end
+						returns[3] = data[0]; // a_end
+						returns[4] = amax;	// a_max
+						returns[5] = wnow; // w0
+						returns[6] = time_physical; // time_end
+						returns[7] = time_physical / time_now; // time_end / time_0
+						returns[8] = a_now; // a0 
+					*/
+
 					// (2.1.4) If <R> is smaller than the desired threshold "error", then we have found a sequestering solution.	
-					if(HIRl_c < HIRl_t || !findsequester){
+					if( HIRl_c < HIRl_t || !findsequester){
 						// Remember some useful information about this run
 						amax = results[4];
 						w0 = results[5];
 						tmax = results[6];
 						tarmfrac = results[7];
 						seqfound = true;
+						if(!findsequester)
+							Omk = 0.0;
 						break;
 					}
 					// If its taking too long to find a sequestering solution,

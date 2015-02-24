@@ -52,13 +52,13 @@ def mcmc_labels(ins, priorsfilename):
             lab[i] = '$m^3$'
             dloc.append( findloc(ll, legit_labels) ) 
         if ll == 'Omegamh2':
-            lab[i] = '$\Omega_m h^2$'     
+            lab[i] = '$\Omega_{\\rm m} h^2$'     
             dloc.append( findloc(ll, legit_labels) ) 
         if ll == 'Omegabh2':
-            lab[i] = '$\Omega_b h^2$'     
+            lab[i] = '$\Omega_{\\rm b} h^2$'     
             dloc.append( findloc(ll, legit_labels) ) 
     	if ll == 'Omegakh2': 
-            lab[i] = '$10^{-3}\Omega_k h^2$'
+            lab[i] = '$10^{-3}\Omega_{\\rm k} h^2$'
             dloc.append( findloc(ll, legit_labels) ) 
             fac[i] = 1000.0
             
@@ -67,17 +67,17 @@ def mcmc_labels(ins, priorsfilename):
     		lab[i] = 'L'
     		dloc.append(n_legit_labels)
     	if ll == 'Omk': 
-    		lab[i] = '$10^{-3}\Omega_k h^2$'
+    		lab[i] = '$10^{-3}\Omega_{\\rm k} h^2$'
     		dloc.append( n_legit_labels + 1 )
     		fac[i] = 1000.0
     	if ll == 'amax': 
-    		lab[i] = '$a_{max}$'
+    		lab[i] = '$a_{\\rm max} / a_0$'
     		dloc.append( n_legit_labels + 2 )
     	if ll == 'tmax': 
-    		lab[i] = '$t_{max}$'
+    		lab[i] = '$t_{\\rm max}$'
     		dloc.append( n_legit_labels + 3 )
     	if ll == 'tmaxfrac': 
-    		lab[i] = '$t_{max} / t_0$'
+    		lab[i] = '$t_{\\rm max} / t_0$'
     		dloc.append( n_legit_labels + 4 )
     	if ll == 'HIR': 
     		lab[i] = '$< R>$'

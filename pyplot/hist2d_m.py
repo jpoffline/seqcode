@@ -2,34 +2,24 @@
 import plottools as pts
 import labels
 from pylab import *
+import backend
 
-
-def generate_histogram_2d(ID, toplot):
+def generate_histogram_2d(ID, toplot, chainID):
     # How many bins for the histogram
-    nbins = 40
+    nbins = backend.nbins_2d
 
     # Font-size for the axes labels
-    fig_fontsize = 13
-
-    # Get "what to plot" from the command line
-  #  toplot = []
-  #  if len(sys.argv) > 1:
-  #      ID = sys.argv[1]
-  #      toplot.append(sys.argv[2])
-  #      toplot.append(sys.argv[3])
-  #  else:
-  #      # Keep a set of defaults
-  #      toplot.append('Omk')
-  #      toplot.append('m3')
+    fig_fontsize = backend.fig_fontsize
 
     # Chain file name
     data_DIR = '../chains/'+ ID + '/'
-    priors_filename = data_DIR + 'priors.txt'
-    data_filename = data_DIR + 'chain0001.dat'
-    PLOTSDIR = 'plots/';
+    priors_filename = data_DIR + backend.priors_file_name
+    data_filename = data_DIR + chainID + '.dat'
+    PLOTSDIR = 'plots/' + ID + '/';
+    pts.check_dir_exists(PLOTSDIR)
 
     # Construct a file name
-    out_fig_filename = PLOTSDIR + ID + '_' + toplot[0] + '_' + toplot[1] + '_2dlike.pdf'
+    out_fig_filename = PLOTSDIR + ID + '_' + toplot[0] + '_' + toplot[1] + backend.like_2d_fn
 
     # Sort out data location & labels
     dloc, axes_labels, fac = labels.mcmc_labels(toplot, priors_filename)

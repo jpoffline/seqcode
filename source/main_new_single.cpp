@@ -108,8 +108,61 @@ int main(int argc, char* argv[]) {
     boost::timer::cpu_timer myTimer;
 
 	
+	double HIRl_p, HIRl_c = 1000, Omk_p, tmax, w0, amax, a_now, tarmfrac;
+	double HIRl_t = inifile.getiniDouble("HIRt", 0.1, "Seq");
+	double p1_min = inifile.getiniDouble("p1_min", 0.0, "Seq");
+	double p1_max = inifile.getiniDouble("p1_max", 0.0, "Seq");
+	double p2_min = inifile.getiniDouble("p2_min", 0.0, "Seq");
+	double p2_max = inifile.getiniDouble("p2_max", 0.0, "Seq");
+	double p2_sigma = (p2_max - p2_min) / 100.0;
+	double Omk = p2_min;
+	vector<double> results2;
+	Omk = p2_min + (p2_max - p2_min) * 0.5 + NormalRand() * p2_sigma;
+	HIRl_c = 1000;
+	cout << "Finding a sequestering solution..." << endl;
+	while(true){
+		
+		// Pick a new Omk that is inside the prior range
+		while(true){
+			Omk_p = Omk + NormalRand() * p2_sigma;
+			if(Omk_p <= p2_max && Omk_p >= p1_min)
+				break;
+		}
 
-	vector<double> results = doEvolution(inifile, myParams, *myOutput, SN1adata, dopostprocess);
+		// Now that we have a sensible choice of Omk,
+		// run the evolver...
+		inifile.setparam("evtoend","Seq",true);
+		inifile.setparam("Omegakh2","Cosmology",Omk_p);
+		Parameters myParams_1(inifile);
+		results2 = doEvolution(inifile, myParams_1, *myOutput, SN1adata, false);
+		// ... and pull out the value of <R>
+		HIRl_p = log10(abs(results2[1]));
+		
+		// If <R> for this choice of Omk is smaller than the previous one,
+		// then keep it.
+		if(HIRl_p < HIRl_c){
+			Omk = Omk_p;
+			HIRl_c = HIRl_p;
+		}
+		
+		// If <R> is smaller than te desired threshold "error",
+		//	then we have found a sequestering solution.	
+		if(HIRl_c < HIRl_t){
+			amax = results2[4];
+			w0 = results2[5];
+			tmax = results2[6];
+			tarmfrac = results2[7];
+			a_now = results2[8];
+			break;
+		}
+	}
+	cout << "A sequestering solution has been found with Omkh2 = " << Omk << endl;
+	inifile.setparam("evtoend","Seq",false);
+	Parameters myParams_2(inifile);
+	
+	
+	vector<double> results = doEvolution(inifile, myParams_2, *myOutput, SN1adata, dopostprocess);
+	//vector<double> results = doEvolution(inifile, myParams, *myOutput, SN1adata, dopostprocess);
 	
 	cout << endl;
 	cout << "outputname = " << outputname << endl;	
@@ -117,12 +170,13 @@ int main(int argc, char* argv[]) {
 	cout << "phidot0 = " << inifile.getiniDouble("phidot0", 0.0, "Cosmology") << endl;	
 	cout << "mass3 = " << inifile.getiniDouble("mass", 0.0, "Quintessence") << endl;	
 	cout << "Omega_k h^2 = " << inifile.getiniDouble("Omegakh2", 0.0, "Cosmology") << endl;
-	cout << "<R> = " << results[1] << endl;
-	cout << "R_end = " << results[2] << endl;
-	cout << "a_end = " << results[3] << endl;
-	cout << "a_max = " << results[4] << endl;
-	cout << "1 + w = " << 1.0 + results[5] << endl;
-	cout << "t_final = " << results[6] << endl;
+	cout << "<R> = " << results2[1] << endl;
+	cout << "R_end = " << results2[2] << endl;
+	cout << "a_end = " << results2[3] << endl;
+	cout << "a_max = " << results2[4] << endl;
+	cout << "1 + w0 = " << 1.0 + results[5] << endl;
+	cout << "t_final = " << results2[6] << endl;
+	cout << "t_final / t0 = " << results2[7] << endl;
 	cout << endl;
 	
     // Stop timing

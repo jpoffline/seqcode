@@ -356,8 +356,7 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
             returns[0] = 1; // integration error
         }
 		
-		time_physical = time_physical + ( data[0] - olddata[0] ) / data[0] / data[3];
-		
+		time_physical = time_physical + ( data[0] - olddata[0] ) / data[3];
 		
 		if(!evtoend){
 			
@@ -552,10 +551,10 @@ vector<double> BeginEvolution(Integrator &integrator, IntParams &params, double 
 	returns[2] = RicciScalar; // R_end
 	returns[3] = data[0]; // a_end
 	returns[4] = amax;	// a_max
-	returns[5] = wnow;
-	returns[6] = time_physical;
-	returns[7] = time_physical / time_now;
-	returns[8] = a_now;
+	returns[5] = wnow; // w0
+	returns[6] = time_physical; // time_end
+	returns[7] = time_physical / time_now; // time_end / time_0
+	returns[8] = a_now; // a0 
 	return returns;
 	
 }

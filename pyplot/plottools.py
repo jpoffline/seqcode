@@ -3,11 +3,23 @@ import pylab as P
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy import stats
+import os
+
+
+line_BURNS = 900
+tarm_loc = 8
+
+
+def check_dir_exists(f):
+    d = os.path.dirname(f)
+    if not os.path.exists(d):
+        os.makedirs(d)
+        print "created output directory"
 
 # Function to read in data (possibly with comments, marked on with '#'
 # then return the required columns
 
-line_BURNS = 9000
+
 
 def data_column(df, (p1, p2), fac):
     d = open(df,'r');
@@ -23,8 +35,9 @@ def data_column(df, (p1, p2), fac):
     	else:
             if line_num > line_BURNS:
                 p = line.split()
-                x.append(float(p[p1]) * fac[0])
-                y.append(float(p[p2]) * fac[1])
+                if float(p[tarm_loc]) > 0:
+                    x.append(float(p[p1]) * fac[0])
+                    y.append(float(p[p2]) * fac[1])
             line_num+=1
     return (np.array(x), np.array(y))
     
@@ -41,7 +54,8 @@ def data_1d(df, p1, fac):
     	else:
             if line_num > line_BURNS:
                 p = line.split()
-                x.append(float(p[p1]) * fac)
+                if float(p[tarm_loc]) > 0:
+                    x.append(float(p[p1]) * fac)
             line_num+=1        
     return np.array(x)    	
 
@@ -73,6 +87,9 @@ def plot_2dhist(data_plottable, lab, nbins, fig_fontsize, output_fig_name):
     plt.figure()
     plt.clf()
     h,d,dd,ddd = plt.hist2d(data_plottable[0], data_plottable[1], bins = nbins)
+    plt.clf()
+    plt.imshow(h, aspect = "auto",origin = "lower", interpolation = "gaussian", extent = [min(data_plottable[0]),max(data_plottable[0]), min(data_plottable[1]) , max(data_plottable[1])])
+
     plt.xlabel(lab[0], fontsize = fig_fontsize)
     plt.ylabel(lab[1], fontsize = fig_fontsize)
     plt.colorbar()

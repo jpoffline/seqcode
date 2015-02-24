@@ -12,7 +12,7 @@ LIBS = -L/usr/local/lib -lm -lgsl -lgslcblas -L/usr/local/include/boost -lboost_
 # Make rules
 
 OBJECTS = integrate.o quintessence.o basicdump.o lambdaCDM.o simplecheck.o model.o linearw.o kessence.o process.o KGB.o params.o evolve_sequester.o fr.o inireader.o print2memory.o
-OBJECTMAIN = main_new_sweep.o 
+OBJECTMAIN = main_new_single.o 
 OBJECTMCMC = main_MCMC_seq.o
 
 .PHONY: all

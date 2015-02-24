@@ -5,36 +5,37 @@ import sys
 from pylab import *
 from matplotlib.backends.backend_pdf import PdfPages
 
-# How many bins to use in the histogram?
-nbins = 20
+import backend
 
-# Font-size for axes labels
-fig_fontsize = 13
+def generate_histogram_1d(ID, toplot, chainID):
 
-# Get "what to plot" from command line inputs
-toplot = []
-ID = 'run'
-if len(sys.argv) > 1:
-    ID = sys.argv[1]
-    toplot.append(sys.argv[2])
-else:
-    # If nothing came through, use a default
-    toplot.append('Omk')
+    print toplot
 
-data_DIR = '../chains/' + ID + '/'
-priors_filename = data_DIR + 'priors.txt'
-data_filename = data_DIR + 'chain0001.dat'
-PLOTSDIR = 'plots/';
+    # How many bins to use in the histogram?
+    nbins = backend.nbins_1d
 
-# Construct file name for outputted figure
-out_fig_filename = PLOTSDIR + ID + '_' + toplot[0] +'_1dlike.pdf'
+    #chainID = 'chain0001'
 
+    # Font-size for axes labels
+    fig_fontsize = backend.fig_fontsize
 
-# Sort out data location & labels
-dloc, axes_labels, fac = labels.mcmc_labels(toplot, priors_filename)
+    data_DIR = '../chains/' + ID + '/'
+    priors_filename = data_DIR + backend.priors_file_name
+    data_filename = data_DIR + chainID + '.dat'
+    PLOTSDIR = 'plots/' + ID + '/';
+    pts.check_dir_exists(PLOTSDIR)
 
-# Get the data columns
-data = pts.data_1d(data_filename, dloc[0], fac[0])
+    # Construct file name for outputted figure
+    out_fig_filename = PLOTSDIR + ID + '_' + toplot[0] + backend.like_1d_fn
 
-# Obtain histogram
-pts.plot_1dhist(data, nbins,axes_labels,out_fig_filename, fig_fontsize)
+    print len(toplot)
+    print out_fig_filename
+
+    # Sort out data location & labels
+    dloc, axes_labels, fac = labels.mcmc_labels(toplot, priors_filename)
+
+    # Get the data columns
+    data = pts.data_1d(data_filename, dloc[0], fac[0])
+
+    # Obtain histogram
+    pts.plot_1dhist(data, nbins,axes_labels,out_fig_filename, fig_fontsize)
