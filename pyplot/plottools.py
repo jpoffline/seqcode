@@ -3,11 +3,11 @@ import pylab as P
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy import stats
+import labels as lab
 import os
 
 
-line_BURNS = 900
-tarm_loc = 8
+line_BURNS = 0
 
 
 def check_dir_exists(f):
@@ -16,10 +16,8 @@ def check_dir_exists(f):
         os.makedirs(d)
         print "created output directory"
 
-# Function to read in data (possibly with comments, marked on with '#'
+# Functions to read in data (possibly with comments, marked on with '#'
 # then return the required columns
-
-
 
 def data_column(df, (p1, p2), fac):
     d = open(df,'r');
@@ -35,13 +33,18 @@ def data_column(df, (p1, p2), fac):
     	else:
             if line_num > line_BURNS:
                 p = line.split()
-                if float(p[tarm_loc]) > 0:
-                    x.append(float(p[p1]) * fac[0])
-                    y.append(float(p[p2]) * fac[1])
+                dat1 = float(p[p1]) * fac[0]
+                dat2 = float(p[p2]) * fac[1]
+                x.append(dat1)
+                y.append(dat2)
             line_num+=1
     return (np.array(x), np.array(y))
     
+    
+ 
+    
 def data_1d(df, p1, fac):
+
     d = open(df,'r');
     lines = d.readlines();
     d.close();
@@ -54,10 +57,18 @@ def data_1d(df, p1, fac):
     	else:
             if line_num > line_BURNS:
                 p = line.split()
-                if float(p[tarm_loc]) > 0:
-                    x.append(float(p[p1]) * fac)
+                dat = float(p[p1]) * fac
+                x.append(dat)
             line_num+=1        
     return np.array(x)    	
+
+
+
+# ------- # ------- # ------- # ------- # ------- #
+#
+#   Plotting functions
+#
+# ------- # ------- # ------- # ------- # ------- #
 
 # Function to plot data with latex labels
 def plot( (X,Y), label, output_fig_name, fig_fontsize):
@@ -75,6 +86,7 @@ def plot_1dhist(data, nbins, axes_labels,out_fig_filename, fig_fontsize):
     pp = PdfPages(out_fig_filename)
     plt.figure()
     plt.clf()
+    
     n, bins, patches = plt.hist(data, nbins, normed=1, histtype='step')
     plt.xlabel(axes_labels[0], fontsize = fig_fontsize)
     plt.ylabel('', fontsize = fig_fontsize)
@@ -92,7 +104,40 @@ def plot_2dhist(data_plottable, lab, nbins, fig_fontsize, output_fig_name):
 
     plt.xlabel(lab[0], fontsize = fig_fontsize)
     plt.ylabel(lab[1], fontsize = fig_fontsize)
-    plt.colorbar()
+    #plt.colorbar()
     pp.savefig()
     pp.close() 
     plt.close()
+
+# ------- # ------- # ------- # ------- # ------- #
+#
+#   Tools to modify data
+#
+# ------- # ------- # ------- # ------- # ------- #
+
+def mod_data_tmax(data, my_min, my_max):
+    
+    newdata = []
+    for i in xrange(0, len(data)):
+        if data[i] > my_min and data[i] < my_max:
+            newdata.append(data[i])
+    return newdata
+
+def mod_data_tmax_2d((x,y), my_min, my_max, nt):
+    
+    if nt < 0:
+        return (x,y)
+    else:
+        xn = []
+        yn = []
+        if nt == 0:
+            for i in xrange(0, len(x)):
+                if x[i] > my_min and x[i] < my_max:
+                    xn.append(x[i])
+                    yn.append(y[i])
+        if nt == 1:
+            for i in xrange(0, len(x)):
+                if y[i] > my_min and y[i] < my_max:
+                    xn.append(x[i])
+                    yn.append(y[i])   
+        return (xn, yn)        

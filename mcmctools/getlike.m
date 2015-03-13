@@ -59,8 +59,8 @@ function getlike(varargin)
     paramlower = C{:,3};
     paramupper = C{:,4};
     paramsigma = C{:,5};
-    nparams = numel(paramnames);
-    
+    nparams = numel(paramnames)
+    paramnames
     % Setup formatting stuff
     formatspec = '%f';
 	% This is where labels from the code and priors file
@@ -122,7 +122,7 @@ function getlike(varargin)
         % Get some important dimensions info
         chaindims = size(chaindata);
         nsamples = chaindims(1)-1;
-        nparams = chaindims(2)-1;
+        %nparams = chaindims(2)-1;
         chainID = 1E4+n-1;
         
         plotnumber = 1;

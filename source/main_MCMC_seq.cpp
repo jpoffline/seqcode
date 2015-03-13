@@ -415,7 +415,7 @@ int main(int argc, char* argv[]) {
                     }
                 }
                 MCMCchainfile << L_current;
-				MCMCchainfile << "\t" << Omk << "\t" << amax << "\t" <<  tmax << "\t" << tarmfrac << "\t" << HIRl_c << endl;
+				MCMCchainfile << "\t" << Omk << "\t" << amax << "\t" <<  tmax << "\t" << tarmfrac << "\t" << HIRl_c  "\t" << w0 << endl;
 			}
 			else{
 			    // Only start the acceptance counter after the burn-in period has ended
